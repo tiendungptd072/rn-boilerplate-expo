@@ -2,19 +2,16 @@ import { version } from 'expo/package.json';
 import { Image } from 'expo-image';
 import { useColorScheme, StyleSheet } from 'react-native';
 
-import { ThemedText } from './themed-text';
-import { ThemedView } from './themed-view';
-
-import { Spacing } from '@/constants/theme';
+import { AppText, spacing, Surface } from '@/design-system';
 
 export function WebBadge() {
   const scheme = useColorScheme();
 
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="code" themeColor="textSecondary" style={styles.versionText}>
+    <Surface style={styles.container}>
+      <AppText variant="code" tone="secondary" style={styles.versionText}>
         v{version}
-      </ThemedText>
+      </AppText>
       <Image
         source={
           scheme === 'dark'
@@ -23,15 +20,15 @@ export function WebBadge() {
         }
         style={styles.badgeImage}
       />
-    </ThemedView>
+    </Surface>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: Spacing.five,
+    padding: spacing.xl,
     alignItems: 'center',
-    gap: Spacing.two,
+    gap: spacing.sm,
   },
   versionText: {
     textAlign: 'center',

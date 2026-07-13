@@ -1,9 +1,8 @@
 import { Image } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
-import Animated, { Keyframe, Easing } from 'react-native-reanimated';
+import Animated, { Keyframe } from 'react-native-reanimated';
 
-import classes from './animated-icon.module.css';
-const DURATION = 300;
+import { motion, radius, useTheme } from '@/design-system';
 
 export function AnimatedSplashOverlay() {
   return null;
@@ -15,11 +14,11 @@ const keyframe = new Keyframe({
   },
   60: {
     transform: [{ scale: 1.2 }],
-    easing: Easing.elastic(1.2),
+    easing: motion.easing.elasticStrong,
   },
   100: {
     transform: [{ scale: 1 }],
-    easing: Easing.elastic(1.2),
+    easing: motion.easing.elasticStrong,
   },
 });
 
@@ -30,12 +29,12 @@ const logoKeyframe = new Keyframe({
   60: {
     transform: [{ scale: 1.2 }],
     opacity: 0,
-    easing: Easing.elastic(1.2),
+    easing: motion.easing.elasticStrong,
   },
   100: {
     transform: [{ scale: 1 }],
     opacity: 1,
-    easing: Easing.elastic(1.2),
+    easing: motion.easing.elasticStrong,
   },
 });
 
@@ -44,10 +43,10 @@ const glowKeyframe = new Keyframe({
     transform: [{ rotateZ: '-180deg' }, { scale: 0.8 }],
     opacity: 0,
   },
-  [DURATION / 1000]: {
+  [motion.duration.normal / 1000]: {
     transform: [{ rotateZ: '0deg' }, { scale: 1 }],
     opacity: 1,
-    easing: Easing.elastic(0.7),
+    easing: motion.easing.elastic,
   },
   100: {
     transform: [{ rotateZ: '7200deg' }],
@@ -55,17 +54,34 @@ const glowKeyframe = new Keyframe({
 });
 
 export function AnimatedIcon() {
+  const theme = useTheme();
+
   return (
     <View style={styles.iconContainer}>
-      <Animated.View entering={glowKeyframe.duration(60 * 1000 * 4)} style={styles.glow}>
+      <Animated.View
+        entering={glowKeyframe.duration(motion.duration.ambient).reduceMotion(motion.reduceMotion)}
+        style={styles.glow}>
         <Image style={styles.glow} source={require('@/assets/images/logo-glow.png')} />
       </Animated.View>
 
-      <Animated.View style={styles.background} entering={keyframe.duration(DURATION)}>
-        <div className={classes.expoLogoBackground} />
+      <Animated.View
+        style={styles.background}
+        entering={keyframe.duration(motion.duration.normal).reduceMotion(motion.reduceMotion)}>
+        <div
+          style={{
+            backgroundImage: `linear-gradient(180deg, ${theme.components.brandArtwork.gradientStart}, ${theme.components.brandArtwork.gradientEnd})`,
+            borderRadius: radius.xl,
+            width: 128,
+            height: 128,
+          }}
+        />
       </Animated.View>
 
-      <Animated.View style={styles.imageContainer} entering={logoKeyframe.duration(DURATION)}>
+      <Animated.View
+        style={styles.imageContainer}
+        entering={logoKeyframe
+          .duration(motion.duration.normal)
+          .reduceMotion(motion.reduceMotion)}>
         <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />
       </Animated.View>
     </View>
