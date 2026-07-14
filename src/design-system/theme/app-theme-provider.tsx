@@ -37,6 +37,12 @@ function resolveThemeMode(
   return systemMode === 'dark' ? 'dark' : 'light';
 }
 
+/**
+ * Provides the resolved design-system theme to the application.
+ *
+ * Explicit light/dark choices are persisted in MMKV. A `system` choice
+ * follows the device appearance and re-resolves when the system mode changes.
+ */
 export function AppThemeProvider({ children }: PropsWithChildren) {
   const systemMode = useColorScheme();
   const [preference, setPreferenceState] = useState<ThemePreference>(getThemePreference);
@@ -76,6 +82,11 @@ export function AppThemeProvider({ children }: PropsWithChildren) {
   );
 }
 
+/**
+ * Returns the selected theme preference and controls for changing it.
+ *
+ * @throws Error when called outside AppThemeProvider.
+ */
 export function useThemeSettings(): AppThemeContextValue {
   const context = useContext(AppThemeContext);
   if (!context) throw new Error('useThemeSettings must be used within AppThemeProvider');

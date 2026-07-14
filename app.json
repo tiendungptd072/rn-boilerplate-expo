@@ -42,6 +42,15 @@
           }
         }
       ],
+      [
+        "expo-localization",
+        {
+          "supportedLocales": {
+            "ios": ["vi", "en"],
+            "android": ["vi", "en"]
+          }
+        }
+      ],
       "expo-status-bar"
     ],
     "experiments": {
