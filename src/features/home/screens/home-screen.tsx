@@ -1,11 +1,12 @@
 import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AnimatedIcon } from '@/components/animated-icon';
 import { WebBadge } from '@/components/web-badge';
 import { AppText, layout, radius, spacing, Surface } from '@/design-system';
 import { HintRow } from '@/features/home/components/hint-row';
+import { useAppReady } from '@/providers/app-ready-provider';
 
 function getDevMenuHint() {
   if (Platform.OS === 'web') {
@@ -27,11 +28,13 @@ function getDevMenuHint() {
 }
 
 export default function HomeScreen() {
+  const ready = useAppReady();
+
   return (
     <Surface style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <Surface style={styles.heroSection}>
-          <AnimatedIcon />
+          {ready ? <AnimatedIcon /> : <View style={styles.iconPlaceholder} />}
           <AppText variant="display" style={styles.title}>
             Welcome to&nbsp;Expo
           </AppText>
@@ -82,6 +85,12 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
+  },
+  // Reserves AnimatedIcon's footprint (see iconContainer in animated-icon.tsx)
+  // so swapping it in once the splash clears doesn't shift the layout.
+  iconPlaceholder: {
+    width: 128,
+    height: 128,
   },
   code: {
     textTransform: 'uppercase',

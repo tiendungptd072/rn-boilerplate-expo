@@ -47,6 +47,19 @@ export type ComponentColorTokens = {
     error: string;
   };
 
+  radio: {
+    background: string;
+    foreground: string;
+    supporting: string;
+    border: string;
+    selectedBorder: string;
+    indicator: string;
+    pressedBackground: string;
+    disabledForeground: string;
+    disabledBorder: string;
+    focusRing: string;
+  };
+
   card: {
     background: string;
     elevatedBackground: string;
@@ -136,6 +149,19 @@ export function createComponentColorTokens(
       cursor: colors.content.brand,
       helper: colors.content.secondary,
       error: colors.feedback.danger,
+    },
+
+    radio: {
+      background: colors.background.surface,
+      foreground: colors.content.primary,
+      supporting: colors.content.secondary,
+      border: colors.border.default,
+      selectedBorder: colors.border.focus,
+      indicator: colors.action.primary,
+      pressedBackground: colors.background.selected,
+      disabledForeground: colors.content.disabled,
+      disabledBorder: colors.border.subtle,
+      focusRing: colors.border.focus,
     },
 
     card: {

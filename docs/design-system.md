@@ -4,7 +4,7 @@ The design system follows Atomic Design. Product code consumes atoms and semanti
 
 ```text
 src/design-system/
-├── atoms/               # Smallest reusable UI units: text, surface, icon
+├── atoms/               # Smallest reusable UI units: text, surface, icon, button, radio group
 ├── theme/               # Light/dark theme composition and React provider
 └── tokens/
     ├── colors/
@@ -22,7 +22,7 @@ src/design-system/
 
 ## Atomic layers
 
-- **Atoms** live in `design-system/atoms` and expose theme-aware primitives such as `AppText`, `Surface`, and `Icon`.
+- **Atoms** live in `design-system/atoms` and expose theme-aware primitives such as `AppText`, `Surface`, `Icon`, `Button`, and `RadioGroup`.
 - **Molecules** combine atoms into a small interaction pattern. Keep a molecule inside its feature until at least two features share it; then promote it to `design-system/molecules`.
 - **Organisms** are larger reusable sections. Apply the same promotion rule rather than creating an empty global catalog.
 - **Templates and pages** belong to feature screens and Expo Router routes, respectively.

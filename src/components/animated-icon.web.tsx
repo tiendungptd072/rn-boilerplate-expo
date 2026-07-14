@@ -1,10 +1,17 @@
 import { Image } from 'expo-image';
+import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, { Keyframe } from 'react-native-reanimated';
 
 import { motion, radius, useTheme } from '@/design-system';
+import { useMarkAppReady } from '@/providers/app-ready-provider';
 
 export function AnimatedSplashOverlay() {
+  // Web has no native splash to wait behind, so screens mounted underneath
+  // are visible immediately — mark ready on mount instead of on exit.
+  const markReady = useMarkAppReady();
+  useEffect(() => markReady(), [markReady]);
+
   return null;
 }
 

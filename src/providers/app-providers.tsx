@@ -3,11 +3,22 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import type { PropsWithChildren } from 'react';
 
-import { useTheme } from '@/design-system';
-import { useThemeSettings } from '@/design-system/theme/app-theme-provider';
+import { AppThemeProvider, useTheme, useThemeSettings } from '@/design-system';
+import { LocalizationProvider } from '@/i18n';
 import { queryClient } from '@/lib/query-client';
 
 export function AppProviders({ children }: PropsWithChildren) {
+  return (
+    <LocalizationProvider>
+      <AppThemeProvider>
+        <ThemedAppProviders>{children}</ThemedAppProviders>
+      </AppThemeProvider>
+    </LocalizationProvider>
+  );
+}
+
+/** Composes providers that require the resolved design-system theme. */
+function ThemedAppProviders({ children }: PropsWithChildren) {
   const { resolvedMode: mode } = useThemeSettings();
   const theme = useTheme();
   const baseNavigationTheme = mode === 'dark' ? DarkTheme : DefaultTheme;

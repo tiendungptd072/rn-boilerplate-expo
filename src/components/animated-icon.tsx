@@ -6,11 +6,13 @@ import Animated, { Keyframe } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
 import { motion, useTheme } from '@/design-system';
+import { useMarkAppReady } from '@/providers/app-ready-provider';
 
 const INITIAL_SCALE_FACTOR = Dimensions.get('screen').height / 90;
 
 export function AnimatedSplashOverlay() {
   const theme = useTheme();
+  const markReady = useMarkAppReady();
   const [animate, setAnimate] = useState(false);
   const [visible, setVisible] = useState(true);
 
@@ -25,13 +27,16 @@ export function AnimatedSplashOverlay() {
       opacity: 1,
     },
     70: {
+      // Opacity must ease monotonically: an elastic/overshoot curve here
+      // sends the value briefly below 0 and back up, which reads as a
+      // second flash right as the splash is fading out.
       opacity: 0,
-      easing: motion.easing.elastic,
+      easing: motion.easing.decelerate,
     },
     100: {
       opacity: 0,
       transform: [{ scale: 1 }],
-      easing: motion.easing.elastic,
+      easing: motion.easing.decelerate,
     },
   });
 
@@ -46,6 +51,7 @@ export function AnimatedSplashOverlay() {
           'worklet';
           if (finished) {
             scheduleOnRN(setVisible, false);
+            scheduleOnRN(markReady);
           }
         })}
       style={[

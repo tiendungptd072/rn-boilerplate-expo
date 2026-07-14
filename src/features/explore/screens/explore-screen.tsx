@@ -1,11 +1,13 @@
 import { Image } from 'expo-image';
-import { Platform, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ExternalLink } from '@/components/external-link';
+import { AppearanceSettings } from '@/components/appearance-settings';
+import { LanguageSettings } from '@/components/language-settings';
 import { Collapsible } from '@/components/ui/collapsible';
 import { WebBadge } from '@/components/web-badge';
-import { AppText, Icon, layout, radius, spacing, Surface, useTheme } from '@/design-system';
+import { AppText, Icon, layout, radius, spacing, Surface } from '@/design-system';
 
 export default function ExploreScreen() {
   const safeAreaInsets = useSafeAreaInsets();
@@ -13,8 +15,6 @@ export default function ExploreScreen() {
     ...safeAreaInsets,
     bottom: safeAreaInsets.bottom + layout.bottomTabInset + spacing.md,
   };
-  const theme = useTheme();
-
   const contentPlatformStyle = Platform.select({
     android: {
       paddingTop: insets.top,
@@ -29,12 +29,13 @@ export default function ExploreScreen() {
   });
 
   return (
-    <ScrollView
-      style={[styles.scrollView, { backgroundColor: theme.colors.background.canvas }]}
-      contentInset={insets}
-      contentContainerStyle={[styles.contentContainer, contentPlatformStyle]}>
-      <Surface style={styles.container}>
-        <Surface style={styles.titleContainer}>
+    <Surface style={styles.scrollView}>
+      <ScrollView
+        style={styles.scrollView}
+        contentInset={insets}
+        contentContainerStyle={[styles.contentContainer, contentPlatformStyle]}>
+        <View style={styles.container}>
+        <View style={styles.titleContainer}>
           <AppText variant="heading">Explore</AppText>
           <AppText style={styles.centerText} tone="secondary">
             This starter app includes example{`\n`}code to help you get started.
@@ -48,9 +49,14 @@ export default function ExploreScreen() {
               </Surface>
             </Pressable>
           </ExternalLink>
-        </Surface>
+        </View>
 
-        <Surface style={styles.sectionsWrapper}>
+        <View style={styles.settingsWrapper}>
+          <AppearanceSettings />
+          <LanguageSettings />
+        </View>
+
+        <View style={styles.sectionsWrapper}>
           <Collapsible title="File-based routing">
             <AppText variant="bodySmall">
               Route files stay in <AppText variant="code">src/app</AppText>, while screen code lives
@@ -106,10 +112,11 @@ export default function ExploreScreen() {
               springs, and the system reduced-motion policy for Reanimated.
             </AppText>
           </Collapsible>
-        </Surface>
+        </View>
         {Platform.OS === 'web' && <WebBadge />}
-      </Surface>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </Surface>
   );
 }
 
@@ -150,6 +157,10 @@ const styles = StyleSheet.create({
     gap: spacing.xl,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
+  },
+  settingsWrapper: {
+    gap: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   collapsibleContent: {
     alignItems: 'center',

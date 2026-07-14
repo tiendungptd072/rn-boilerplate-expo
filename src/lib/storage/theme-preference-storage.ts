@@ -1,4 +1,4 @@
-import type { ThemePreference } from "@/design-system/theme/themes";
+import type { ThemePreference } from "@/design-system";
 import { appStorage } from "@/lib/storage/mmkv-storage";
 
 const THEME_PREFERENCE_KEY = "settings.theme-preference";

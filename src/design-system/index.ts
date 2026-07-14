@@ -1,12 +1,23 @@
 export { AppText, type AppTextProps } from './atoms/app-text';
+export { Button, type ButtonProps, type ButtonVariant } from './atoms/button';
 export { Icon, type IconName, type IconProps } from './atoms/icon';
+export {
+  RadioGroup,
+  type RadioGroupProps,
+  type RadioOption,
+} from './atoms/radio-group';
 export { Surface, type SurfaceProps } from './atoms/surface';
 export { DesignSystemProvider, useTheme } from './theme/theme-provider';
 export {
   AppThemeProvider,
   useThemeSettings,
 } from './theme/app-theme-provider';
-export { themes, type AppTheme, type ThemeMode } from './theme/themes';
+export {
+  themes,
+  type AppTheme,
+  type ThemeMode,
+  type ThemePreference,
+} from './theme/themes';
 export { darkSemanticColors, lightSemanticColors } from './tokens/colors/semantic';
 export { borderWidth, radius } from './tokens/shape';
 export { elevation } from './tokens/elevation';

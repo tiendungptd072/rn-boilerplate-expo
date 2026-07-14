@@ -4,6 +4,7 @@ export const motion = {
   duration: {
     instant: 0,
     fast: 150,
+    themeTransition: 240,
     normal: 250,
     slow: 600,
     ambient: 240_000,

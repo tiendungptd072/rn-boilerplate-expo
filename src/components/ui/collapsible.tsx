@@ -1,5 +1,5 @@
 import { type PropsWithChildren, useState } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
 import { AppText, Icon, motion, radius, spacing, Surface } from '@/design-system';
@@ -8,7 +8,7 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Surface>
+    <View>
       <Pressable
         accessibilityRole="button"
         accessibilityState={{ expanded: isOpen }}
@@ -32,7 +32,7 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
           </Surface>
         </Animated.View>
       )}
-    </Surface>
+    </View>
   );
 }
 
