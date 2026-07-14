@@ -1,10 +1,8 @@
 import { Pressable, StyleSheet, View, type PressableProps } from 'react-native';
 import { useState } from 'react';
-import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
 import { AppText } from './app-text';
 import { useTheme } from '../theme/theme-provider';
-import { useThemeColorTransition } from '../theme/use-theme-color-transition';
 
 export type RadioOption<TValue extends string> = {
   value: TValue;
@@ -36,22 +34,12 @@ function RadioOptionRow<TValue extends string>({
   const theme = useTheme();
   const [focused, setFocused] = useState(false);
   const colors = theme.components.radio;
-
-  // Radio border and indicator are always-visible chrome, so their color
-  // must cross-fade in lockstep with Surface's background — otherwise the
-  // old color pops instantly against the still-fading surface underneath.
-  const radioBorderColor = useThemeColorTransition(
-    option.disabled ? colors.disabledBorder : selected ? colors.selectedBorder : colors.border,
-  );
-  const indicatorColor = useThemeColorTransition(
-    option.disabled ? colors.disabledForeground : colors.indicator,
-  );
-  const animatedRadioStyle = useAnimatedStyle(() => ({
-    borderColor: radioBorderColor.value,
-  }));
-  const animatedIndicatorStyle = useAnimatedStyle(() => ({
-    backgroundColor: indicatorColor.value,
-  }));
+  const radioBorderColor = option.disabled
+    ? colors.disabledBorder
+    : selected
+      ? colors.selectedBorder
+      : colors.border;
+  const indicatorColor = option.disabled ? colors.disabledForeground : colors.indicator;
 
   const getStyle: PressableProps['style'] = ({ pressed }) => [
     styles.option,
@@ -81,28 +69,28 @@ function RadioOptionRow<TValue extends string>({
       onPress={() => onSelect(option.value)}
       style={getStyle}
     >
-      <Animated.View
+      <View
         style={[
           styles.radio,
-          animatedRadioStyle,
           {
+            borderColor: radioBorderColor,
             borderWidth: theme.borderWidth.thick,
             borderRadius: theme.radius.full,
           },
         ]}
       >
         {selected && (
-          <Animated.View
+          <View
             style={[
               styles.indicator,
-              animatedIndicatorStyle,
               {
+                backgroundColor: indicatorColor,
                 borderRadius: theme.radius.full,
               },
             ]}
           />
         )}
-      </Animated.View>
+      </View>
 
       <View style={styles.content}>
         <AppText

@@ -7,7 +7,6 @@ import {
 import { elevation } from "@/design-system/tokens/elevation";
 import { iconSize } from "@/design-system/tokens/icons";
 import { layout } from "@/design-system/tokens/layout";
-import { motion } from "@/design-system/tokens/motion";
 import { borderWidth, radius } from "@/design-system/tokens/shape";
 import { spacing } from "@/design-system/tokens/spacing";
 import { typography } from "@/design-system/tokens/typography";
@@ -34,7 +33,6 @@ function createTheme<TMode extends ThemeMode>(
     borderWidth,
     elevation,
     iconSize,
-    motion,
   } as const;
 }
 

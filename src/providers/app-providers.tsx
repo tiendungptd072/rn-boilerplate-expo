@@ -1,10 +1,14 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import type { PropsWithChildren } from 'react';
+import { type PropsWithChildren, useMemo } from 'react';
 
-import { AppThemeProvider, useTheme, useThemeSettings } from '@/design-system';
-import { LocalizationProvider } from '@/i18n';
+import {
+  AppThemeProvider,
+  useThemeSettings,
+} from '@/design-system/theme/app-theme-provider';
+import { useTheme } from '@/design-system/theme/theme-provider';
+import { LocalizationProvider } from '@/i18n/localization-provider';
 import { queryClient } from '@/lib/query-client';
 
 export function AppProviders({ children }: PropsWithChildren) {
@@ -21,24 +25,27 @@ export function AppProviders({ children }: PropsWithChildren) {
 function ThemedAppProviders({ children }: PropsWithChildren) {
   const { resolvedMode: mode } = useThemeSettings();
   const theme = useTheme();
-  const baseNavigationTheme = mode === 'dark' ? DarkTheme : DefaultTheme;
-  const navigationTheme = {
-    ...baseNavigationTheme,
-    colors: {
-      ...baseNavigationTheme.colors,
-      primary: theme.colors.content.brand,
-      background: theme.colors.background.canvas,
-      card: theme.colors.background.surface,
-      text: theme.colors.content.primary,
-      border: theme.colors.border.default,
-      notification: theme.colors.feedback.danger,
-    },
-  };
+  const navigationTheme = useMemo(() => {
+    const baseTheme = mode === 'dark' ? DarkTheme : DefaultTheme;
+
+    return {
+      ...baseTheme,
+      colors: {
+        ...baseTheme.colors,
+        primary: theme.colors.content.brand,
+        background: theme.colors.background.canvas,
+        card: theme.colors.background.surface,
+        text: theme.colors.content.primary,
+        border: theme.colors.border.default,
+        notification: theme.colors.feedback.danger,
+      },
+    };
+  }, [mode, theme]);
 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={navigationTheme}>
-        <StatusBar animated style={mode === 'dark' ? 'light' : 'dark'} />
+        <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
         {children}
       </ThemeProvider>
     </QueryClientProvider>

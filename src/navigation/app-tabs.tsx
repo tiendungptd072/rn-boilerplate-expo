@@ -1,6 +1,6 @@
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 
-import { useTheme } from '@/design-system';
+import { useTheme } from '@/design-system/theme/theme-provider';
 
 export default function AppTabs() {
   const theme = useTheme();

@@ -1,40 +1,29 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Image } from 'expo-image';
+import { Platform, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
 import { WebBadge } from '@/components/web-badge';
-import { AppText, layout, radius, spacing, Surface } from '@/design-system';
+import { AppText } from '@/design-system/atoms/app-text';
+import { Surface } from '@/design-system/atoms/surface';
+import { layout } from '@/design-system/tokens/layout';
+import { radius } from '@/design-system/tokens/shape';
+import { spacing } from '@/design-system/tokens/spacing';
 import { HintRow } from '@/features/home/components/hint-row';
-import { useAppReady } from '@/providers/app-ready-provider';
 
 function getDevMenuHint() {
   if (Platform.OS === 'web') {
     return <AppText variant="bodySmall">use browser devtools</AppText>;
   }
-  if (Device.isDevice) {
-    return (
-      <AppText variant="bodySmall">
-        shake device or press <AppText variant="code">m</AppText> in terminal
-      </AppText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <AppText variant="bodySmall">
-      press <AppText variant="code">{shortcut}</AppText>
-    </AppText>
-  );
+
+  return <AppText variant="bodySmall">open the Expo developer menu</AppText>;
 }
 
 export default function HomeScreen() {
-  const ready = useAppReady();
-
   return (
     <Surface style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <Surface style={styles.heroSection}>
-          {ready ? <AnimatedIcon /> : <View style={styles.iconPlaceholder} />}
+          <Image source={require('@/assets/images/splash-icon.png')} style={styles.logo} />
           <AppText variant="display" style={styles.title}>
             Welcome to&nbsp;Expo
           </AppText>
@@ -83,14 +72,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     gap: spacing.lg,
   },
+  logo: {
+    width: 76,
+    height: 71,
+  },
   title: {
     textAlign: 'center',
-  },
-  // Reserves AnimatedIcon's footprint (see iconContainer in animated-icon.tsx)
-  // so swapping it in once the splash clears doesn't shift the layout.
-  iconPlaceholder: {
-    width: 128,
-    height: 128,
   },
   code: {
     textTransform: 'uppercase',

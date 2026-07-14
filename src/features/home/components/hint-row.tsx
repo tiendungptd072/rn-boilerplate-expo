@@ -1,7 +1,10 @@
 import type { ReactNode } from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { AppText, radius, spacing, Surface } from '@/design-system';
+import { AppText } from '@/design-system/atoms/app-text';
+import { Surface } from '@/design-system/atoms/surface';
+import { radius } from '@/design-system/tokens/shape';
+import { spacing } from '@/design-system/tokens/spacing';
 
 type HintRowProps = {
   title?: string;

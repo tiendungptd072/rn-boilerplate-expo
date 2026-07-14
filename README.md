@@ -174,6 +174,7 @@ Comment code phải giải thích lý do, invariant, platform constraint hoặc 
 
 - [Project architecture](./docs/architecture.md)
 - [Design System](./docs/design-system.md)
+- [Cold-start performance](./docs/cold-start-performance.md)
 - [Expo SDK 57 documentation](https://docs.expo.dev/versions/v57.0.0/)
 - [Expo Router](https://docs.expo.dev/router/introduction/)
 - [Expo development builds](https://docs.expo.dev/develop/development-builds/introduction/)
