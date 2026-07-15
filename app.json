@@ -46,12 +46,22 @@
         "expo-localization",
         {
           "supportedLocales": {
-            "ios": ["vi", "en"],
-            "android": ["vi", "en"]
+            "ios": [
+              "vi",
+              "en"
+            ],
+            "android": [
+              "vi",
+              "en"
+            ]
           }
         }
       ],
-      "expo-status-bar"
+      "expo-status-bar",
+      "expo-font",
+      "expo-image",
+      "expo-secure-store",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
