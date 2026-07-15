@@ -1,14 +1,18 @@
 import { Image } from 'expo-image';
+import { useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { WebBadge } from '@/components/web-badge';
 import { AppText } from '@/design-system/atoms/app-text';
+import { Button } from '@/design-system/atoms/button';
 import { Surface } from '@/design-system/atoms/surface';
 import { layout } from '@/design-system/tokens/layout';
 import { radius } from '@/design-system/tokens/shape';
 import { spacing } from '@/design-system/tokens/spacing';
 import { HintRow } from '@/features/home/components/hint-row';
+import { useLocalization } from '@/i18n';
+import { useSession } from '@/lib/auth/session-provider';
 
 function getDevMenuHint() {
   if (Platform.OS === 'web') {
@@ -19,6 +23,24 @@ function getDevMenuHint() {
 }
 
 export default function HomeScreen() {
+  const { t } = useLocalization();
+  const { signOut } = useSession();
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const [hasStorageError, setHasStorageError] = useState(false);
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    setHasStorageError(false);
+
+    try {
+      await signOut();
+    } catch {
+      setHasStorageError(true);
+    } finally {
+      setIsSigningOut(false);
+    }
+  };
+
   return (
     <Surface style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -44,6 +66,16 @@ export default function HomeScreen() {
             hint={<AppText variant="code">bun run reset-project</AppText>}
           />
         </Surface>
+
+        <Button loading={isSigningOut} variant="secondary" onPress={handleSignOut}>
+          {t('auth.logout.title')}
+        </Button>
+
+        {hasStorageError && (
+          <AppText accessibilityRole="alert" tone="danger">
+            {t('auth.errors.sessionPersistence')}
+          </AppText>
+        )}
 
         {Platform.OS === 'web' && <WebBadge />}
       </SafeAreaView>

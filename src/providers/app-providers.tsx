@@ -9,15 +9,18 @@ import {
 } from '@/design-system/theme/app-theme-provider';
 import { useTheme } from '@/design-system/theme/theme-provider';
 import { LocalizationProvider } from '@/i18n/localization-provider';
+import { SessionProvider } from '@/lib/auth/session-provider';
 import { queryClient } from '@/lib/query-client';
 
 export function AppProviders({ children }: PropsWithChildren) {
   return (
-    <LocalizationProvider>
-      <AppThemeProvider>
-        <ThemedAppProviders>{children}</ThemedAppProviders>
-      </AppThemeProvider>
-    </LocalizationProvider>
+    <SessionProvider>
+      <LocalizationProvider>
+        <AppThemeProvider>
+          <ThemedAppProviders>{children}</ThemedAppProviders>
+        </AppThemeProvider>
+      </LocalizationProvider>
+    </SessionProvider>
   );
 }
 
