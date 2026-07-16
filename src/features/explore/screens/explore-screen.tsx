@@ -13,7 +13,7 @@ export default function ExploreScreen() {
   const safeAreaInsets = useSafeAreaInsets();
   const insets = {
     ...safeAreaInsets,
-    bottom: safeAreaInsets.bottom + layout.bottomTabInset + spacing.md,
+    bottom: Platform.OS === 'web' ? safeAreaInsets.bottom + spacing.md : spacing.md,
   };
   const contentPlatformStyle = Platform.select({
     android: {

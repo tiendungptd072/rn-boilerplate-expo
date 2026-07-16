@@ -43,7 +43,7 @@ export default function HomeScreen() {
 
   return (
     <Surface style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
         <Surface style={styles.heroSection}>
           <Image source={require('@/assets/images/splash-icon.png')} style={styles.logo} />
           <AppText variant="display" style={styles.title}>
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     alignItems: 'center',
     gap: spacing.md,
-    paddingBottom: layout.bottomTabInset + spacing.md,
+    paddingBottom: spacing.md,
     maxWidth: layout.maxContentWidth,
   },
   heroSection: {
