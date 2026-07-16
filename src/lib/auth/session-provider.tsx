@@ -8,6 +8,11 @@ import {
   useState,
 } from 'react';
 
+import {
+  configureApiAuth,
+  setApiAccessToken,
+} from '@/lib/api-client';
+
 import { getStoredSession, storeSession } from './session-storage';
 
 type SessionContextValue = {
@@ -29,10 +34,16 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
     getStoredSession()
       .then((storedSession) => {
-        if (active) setSession(storedSession);
+        if (active) {
+          setApiAccessToken(storedSession);
+          setSession(storedSession);
+        }
       })
       .catch(() => {
-        if (active) setSession(null);
+        if (active) {
+          setApiAccessToken(null);
+          setSession(null);
+        }
       })
       .finally(() => {
         if (active) setIsLoading(false);
@@ -43,15 +54,28 @@ export function SessionProvider({ children }: PropsWithChildren) {
     };
   }, []);
 
+  useEffect(() => {
+    configureApiAuth({
+      onUnauthorized: () => {
+        setSession(null);
+        return storeSession(null);
+      },
+    });
+
+    return () => configureApiAuth({ onUnauthorized: undefined });
+  }, []);
+
   const signIn = useCallback(async (nextSession: string) => {
     if (!nextSession) throw new Error('A non-empty session is required');
 
     await storeSession(nextSession);
+    setApiAccessToken(nextSession);
     setSession(nextSession);
   }, []);
 
   const signOut = useCallback(async () => {
     await storeSession(null);
+    setApiAccessToken(null);
     setSession(null);
   }, []);
 
