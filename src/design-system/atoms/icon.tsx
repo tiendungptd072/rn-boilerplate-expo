@@ -5,6 +5,12 @@ import { useTheme } from '@/design-system/theme/theme-provider';
 import type { IconSizeToken } from '@/design-system/tokens/icons';
 
 const iconNames = {
+  calendar: { ios: 'calendar', android: 'calendar_today', web: 'calendar_today' },
+  chevronDown: {
+    ios: 'chevron.down',
+    android: 'keyboard_arrow_down',
+    web: 'keyboard_arrow_down',
+  },
   chevronRight: { ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' },
   externalLink: { ios: 'arrow.up.right.square', android: 'open_in_new', web: 'open_in_new' },
   home: { ios: 'house.fill', android: 'home', web: 'home' },
