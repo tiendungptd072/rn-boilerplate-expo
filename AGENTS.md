@@ -16,6 +16,60 @@ Act as a **Staff Expo React Native Engineer** responsible for a production-quali
 - Prefer Expo-supported APIs and configuration over custom native code. Do not add or edit `ios/` or `android/` native projects unless the task explicitly requires it.
 - Keep Expo, React Native, and Expo package versions compatible. Use `bunx expo install <package>` for Expo packages so Expo selects a compatible version.
 
+## Documentation map
+
+This file is the single source of truth. It stays thin: detail lives in `docs/`, and the reasoning behind irreversible decisions lives in `docs/adr/`. Read the linked page before touching the area it owns.
+
+| Read this | Before you |
+| --- | --- |
+| [docs/architecture.md](docs/architecture.md) | Add a file, move code between layers, or wire a route |
+| [docs/design-system.md](docs/design-system.md) | Build UI, add a color/typography/motion token, or style a screen |
+| [docs/cold-start-performance.md](docs/cold-start-performance.md) | Touch root layout, providers, splash, or startup storage reads |
+| [docs/distribution.md](docs/distribution.md) | Cut a release, bump a version, or write a migration guide |
+| [docs/adr/](docs/adr/) | Change an architectural boundary — check whether a decision already binds you |
+| [docs/_TEMPLATE_FEATURE_PLAN.md](docs/_TEMPLATE_FEATURE_PLAN.md) | Start work that trips the plan gate below |
+
+[docs/README.md](docs/README.md) is the full index. A new page that is not listed there does not exist.
+
+## Hard invariants
+
+Violating one of these is a defect, not a style preference. They are derived from the docs above; when a rule changes, change it in its owning doc and here in the same commit.
+
+**Boundaries**
+
+1. Files in `src/app` define URLs and layouts only. A route renders or re-exports a screen from `src/features`.
+2. Shared modules (`components`, `design-system`, `hooks`, `lib`, `providers`) must not import from `features` or `app`.
+3. A feature must not reach into another feature's internals. Promote shared code only after a second real use appears.
+4. API calls, Zod schemas, Zustand stores, and form logic stay inside the feature that owns them.
+
+**Design system**
+
+5. Product UI consumes the public `@/design-system` API. Raw hex, RGB, and named colors are not allowed in product components, and primitive palette values stay inside the token layers.
+6. Adding a semantic color token requires its dark-mode value in the same change.
+7. Typography, spacing, radius, and elevation come from tokens. Screens do not invent text styles, and spacing tokens are not radii.
+8. New animation honors the shared reduced-motion policy.
+
+**State, data, and safety**
+
+9. Server state uses TanStack Query. Shared client state uses Zustand. Reach for React state or context first.
+10. Secrets and credentials live in Expo SecureStore only. MMKV holds non-sensitive data.
+11. Validate untrusted API and persisted data at the boundary with Zod.
+12. Features branch on `ApiError` (`kind`, `status`, `retryable`, `fields`), never on `AxiosError` or a raw transport error.
+13. Public configuration is read through `src/config/env.ts`. `EXPO_PUBLIC_*` is bundled into the app and must never hold a secret; `APP_VARIANT` and `EXPO_PUBLIC_APP_ENV` must match.
+14. User-facing text comes from `useLocalization().t`. A new key is added to both `en` and `vi` in the same change.
+
+**Toolchain**
+
+15. Bun only — `bun`, `bunx`, and `bun.lock` as the sole lockfile. Install Expo packages with `bunx expo install`.
+16. Do not add or edit `ios/` or `android/` native projects. Prefer Expo config and Expo-supported APIs.
+17. A change to the template surface updates `template.version.json`, `package.json`, and `CHANGELOG.md`, plus a migration guide under `docs/migrations/` for any breaking change.
+
+## Plan gate
+
+Stop before coding and produce a plan from [docs/\_TEMPLATE\_FEATURE\_PLAN.md](docs/_TEMPLATE_FEATURE_PLAN.md) when the work: adds a feature or route, adds a runtime dependency, crosses a boundary in §Hard invariants, changes auth/API/storage contracts, or ships a release or migration. Wait for human approval on that plan before writing code.
+
+Everything smaller follows the Ponytail ladder directly — no plan, no ceremony.
+
 ## Ponytail: lazy senior developer mode
 
 Lazy means efficient, not careless: the best code is code never written. Understand the task and trace the real flow before selecting the smallest solution. Stop at the first rung that holds:
@@ -54,7 +108,23 @@ Write comments as senior-maintained documentation: concise, factual, and useful 
 - Use `NOTE:` only for durable context, `WARNING:` for behavior that could cause data loss, security, or production failures, and `ponytail:` for accepted temporary ceilings with a concrete upgrade path.
 - Never document secrets, credentials, personal data, or internal values that do not belong in source control.
 
+## Verification loop
+
+Verification is a loop, not a final step: run it, read the failure, fix the cause, run it again. Never report work as done without a green run, and never report a step as passing that you did not run.
+
+```bash
+bun run lint
+bun run typecheck
+bun run test
+bunx expo install --check   # only when dependencies changed
+```
+
+These are the same gates as `.github/workflows/quality.yml`, so a green local loop is a green CI run. Scale down only for a docs-only change; say which steps you skipped and why.
+
+If a failure shows that this file, a page in `docs/`, or an approved plan was wrong, fix the document in the same change. Stale guidance is a defect that reproduces itself.
+
 ## Before handoff
 
-- Run the smallest relevant validation with Bun (at minimum `bun run lint` when applicable) and report what was run and any limitation.
-- Review the final diff for scope, Expo SDK 57 compatibility, accessibility, and accidental package/lockfile changes.
+- Report the exact commands you ran, their result, and any step you could not run.
+- Review the final diff for scope, Expo SDK 57 compatibility, accessibility, and accidental package or lockfile changes.
+- Name any invariant you deliberately bent and why, or state that none were.

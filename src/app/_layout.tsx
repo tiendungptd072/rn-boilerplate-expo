@@ -3,9 +3,10 @@ import '@/global.css';
 import * as SplashScreen from 'expo-splash-screen';
 import { Stack } from 'expo-router';
 import { useCallback, useRef } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { useTheme } from '@/design-system/theme/theme-provider';
+import { useLocalization } from '@/i18n';
 import { useSession } from '@/lib/auth/session-provider';
 import { AppProviders } from '@/providers/app-providers';
 
@@ -22,6 +23,7 @@ export default function RootLayout() {
 
 function AppContent() {
   const theme = useTheme();
+  const { t } = useLocalization();
   const { isLoading, session } = useSession();
   const splashHidden = useRef(false);
   const hideSplash = useCallback(() => {
@@ -31,21 +33,28 @@ function AppContent() {
     SplashScreen.hide();
   }, []);
 
-  if (isLoading) return null;
-
   return (
     <View
       onLayout={hideSplash}
       style={[styles.app, { backgroundColor: theme.colors.background.canvas }]}>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Protected guard={!session}>
-          <Stack.Screen name="(auth)" />
-        </Stack.Protected>
+      {isLoading ? (
+        <View
+          accessibilityLabel={t('common.loading')}
+          accessibilityRole="progressbar"
+          style={styles.bootState}>
+          <ActivityIndicator color={theme.colors.content.brand} />
+        </View>
+      ) : (
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Protected guard={!session}>
+            <Stack.Screen name="(auth)" />
+          </Stack.Protected>
 
-        <Stack.Protected guard={Boolean(session)}>
-          <Stack.Screen name="(app)" />
-        </Stack.Protected>
-      </Stack>
+          <Stack.Protected guard={Boolean(session)}>
+            <Stack.Screen name="(app)" />
+          </Stack.Protected>
+        </Stack>
+      )}
     </View>
   );
 }
@@ -53,5 +62,10 @@ function AppContent() {
 const styles = StyleSheet.create({
   app: {
     flex: 1,
+  },
+  bootState: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
   },
 });

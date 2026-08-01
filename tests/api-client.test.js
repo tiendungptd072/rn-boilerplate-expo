@@ -1,11 +1,15 @@
 import { afterEach, describe, expect, test } from 'bun:test';
-import { AxiosError, isAxiosError } from 'axios';
+import { AxiosError } from 'axios';
 
-import {
+process.env.EXPO_PUBLIC_API_URL ??= 'https://api.example.com';
+
+const { ApiError } = await import('../src/lib/api-error');
+const {
   apiClient,
   configureApiAuth,
+  publicApiClient,
   setApiAccessToken,
-} from '../src/lib/api-client';
+} = await import('../src/lib/api-client');
 
 afterEach(() => {
   configureApiAuth({
@@ -15,7 +19,7 @@ afterEach(() => {
   setApiAccessToken(null);
 });
 
-describe('api client', () => {
+describe('api client auth', () => {
   test('adds the bearer token without overriding an explicit header', async () => {
     setApiAccessToken('session-token');
 
@@ -32,7 +36,7 @@ describe('api client', () => {
     expect(response.data).toBe('Bearer session-token');
   });
 
-  test('refreshes once and retries concurrent 401 requests', async () => {
+  test('refreshes once and retries five concurrent 401 requests', async () => {
     let attempts = 0;
     let refreshes = 0;
 
@@ -49,21 +53,7 @@ describe('api client', () => {
       attempts += 1;
 
       if (config.headers.get('Authorization') === 'Bearer expired-token') {
-        const response = {
-          config,
-          data: null,
-          headers: {},
-          status: 401,
-          statusText: 'Unauthorized',
-        };
-
-        throw new AxiosError(
-          'Unauthorized',
-          AxiosError.ERR_BAD_REQUEST,
-          config,
-          undefined,
-          response,
-        );
+        throw unauthorizedError(config);
       }
 
       return {
@@ -75,31 +65,150 @@ describe('api client', () => {
       };
     };
 
-    const responses = await Promise.all([
-      apiClient.get('/profile', { adapter }),
-      apiClient.get('/settings', { adapter }),
-    ]);
+    const responses = await Promise.all(
+      Array.from({ length: 5 }, (_, index) =>
+        apiClient.get(`/resource/${index}`, { adapter }),
+      ),
+    );
 
-    expect(responses.map((response) => response.data)).toEqual([
-      'Bearer fresh-token',
-      'Bearer fresh-token',
-    ]);
+    expect(responses.map((response) => response.data)).toEqual(
+      Array.from({ length: 5 }, () => 'Bearer fresh-token'),
+    );
     expect(refreshes).toBe(1);
-    expect(attempts).toBe(4);
+    expect(attempts).toBe(10);
   });
 
-  test('keeps failures rejected for React Query', async () => {
-    try {
-      await apiClient.get('/profile', {
-        adapter: async (config) => {
-          throw new AxiosError('Network error', AxiosError.ERR_NETWORK, config);
-        },
-      });
-    } catch (error) {
-      expect(isAxiosError(error)).toBe(true);
-      return;
-    }
+  test('logs out once when refresh fails for concurrent requests', async () => {
+    let refreshes = 0;
+    let unauthorizedTransitions = 0;
 
-    throw new Error('Expected the API request to reject');
+    setApiAccessToken('expired-token');
+    configureApiAuth({
+      onUnauthorized: async () => {
+        unauthorizedTransitions += 1;
+        await Promise.resolve();
+      },
+      refreshAccessToken: async () => {
+        refreshes += 1;
+        throw new Error('Refresh failed');
+      },
+    });
+
+    const results = await Promise.allSettled(
+      Array.from({ length: 5 }, (_, index) =>
+        apiClient.get(`/resource/${index}`, {
+          adapter: async (config) => {
+            throw unauthorizedError(config);
+          },
+        }),
+      ),
+    );
+
+    expect(results.every((result) => result.status === 'rejected')).toBe(true);
+    expect(refreshes).toBe(1);
+    expect(unauthorizedTransitions).toBe(1);
+  });
+
+  test('logs out when a refreshed request is still unauthorized', async () => {
+    let attempts = 0;
+    let unauthorizedTransitions = 0;
+
+    setApiAccessToken('expired-token');
+    configureApiAuth({
+      onUnauthorized: () => {
+        unauthorizedTransitions += 1;
+      },
+      refreshAccessToken: async () => 'fresh-token',
+    });
+
+    const request = apiClient.get('/profile', {
+      adapter: async (config) => {
+        attempts += 1;
+        throw unauthorizedError(config);
+      },
+    });
+
+    await expect(request).rejects.toMatchObject({ kind: 'unauthorized', status: 401 });
+    expect(attempts).toBe(2);
+    expect(unauthorizedTransitions).toBe(1);
+  });
+
+  test('logs out immediately when no refresh callback is configured', async () => {
+    let unauthorizedTransitions = 0;
+
+    setApiAccessToken('expired-token');
+    configureApiAuth({
+      onUnauthorized: () => {
+        unauthorizedTransitions += 1;
+      },
+    });
+
+    const request = apiClient.get('/profile', {
+      adapter: async (config) => {
+        throw unauthorizedError(config);
+      },
+    });
+
+    await expect(request).rejects.toBeInstanceOf(ApiError);
+    expect(unauthorizedTransitions).toBe(1);
   });
 });
+
+describe('api error normalization', () => {
+  test('maps network failures without leaking Axios errors', async () => {
+    const request = publicApiClient.get('/profile', {
+      adapter: async (config) => {
+        throw new AxiosError('Network error', AxiosError.ERR_NETWORK, config);
+      },
+    });
+
+    await expect(request).rejects.toMatchObject({ kind: 'network', retryable: true });
+  });
+
+  test('maps validation fields', async () => {
+    const request = publicApiClient.post('/profile', null, {
+      adapter: async (config) => {
+        const response = {
+          config,
+          data: { errors: { email: 'Invalid email' } },
+          headers: {},
+          status: 422,
+          statusText: 'Unprocessable Entity',
+        };
+
+        throw new AxiosError(
+          'Validation failed',
+          AxiosError.ERR_BAD_REQUEST,
+          config,
+          undefined,
+          response,
+        );
+      },
+    });
+
+    await expect(request).rejects.toMatchObject({
+      fields: { email: 'Invalid email' },
+      kind: 'validation',
+      retryable: false,
+      status: 422,
+    });
+  });
+});
+
+function unauthorizedError(config) {
+  const response = {
+    config,
+    data: null,
+    headers: {},
+    status: 401,
+    statusText: 'Unauthorized',
+  };
+
+  return new AxiosError(
+    'Unauthorized',
+    AxiosError.ERR_BAD_REQUEST,
+    config,
+    undefined,
+    response,
+  );
+}

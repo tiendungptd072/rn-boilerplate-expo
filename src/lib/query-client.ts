@@ -4,8 +4,9 @@ import {
   onlineManager,
   QueryClient,
 } from '@tanstack/react-query';
-import { isAxiosError } from 'axios';
 import { AppState, Platform } from 'react-native';
+
+import { isApiError } from '@/lib/api-error';
 
 onlineManager.setEventListener((setOnline) =>
   NetInfo.addEventListener((state) => {
@@ -30,11 +31,8 @@ export const queryClient = new QueryClient({
     },
     queries: {
       retry: (failureCount, error) => {
-        const status = isAxiosError(error) ? error.response?.status : undefined;
-
-        if (status && status >= 400 && status < 500) return false;
-
-        return failureCount < 1;
+        if (isApiError(error)) return error.retryable && failureCount < 1;
+        return false;
       },
       staleTime: 30_000,
     },

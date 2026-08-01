@@ -10,7 +10,7 @@ Boilerplate React Native production-oriented chạy trên Expo SDK 57, React Nat
 - Atomic UI primitives: `AppText`, `Surface`, `Icon`.
 - TanStack Query cho server state và Zustand cho client state.
 - React Hook Form kết hợp Zod cho form và runtime validation.
-- Axios, NetInfo, MMKV, SecureStore, localization và i18next đã sẵn sàng để tích hợp theo feature.
+- Axios, NetInfo, MMKV, SecureStore và type-safe localization đã sẵn sàng để tích hợp theo feature.
 - React Compiler, Reanimated 4 và reduced-motion policy.
 - ESLint Flat Config và TypeScript strict.
 
@@ -25,8 +25,14 @@ Boilerplate React Native production-oriented chạy trên Expo SDK 57, React Nat
 
 ```bash
 bun install
+bun run init-project -- --config config/brand.example.json --dry-run
+bun run init-project -- --config config/brand.example.json --remove-demo
 bun run start
 ```
+
+Luôn đọc output dry-run trước khi chạy initializer. `--remove-demo` chỉ xoá feature/route Explore và các navigation block được đánh dấu; core providers, auth, infrastructure và Design System không bị đụng tới.
+
+Tạo `.env.local` từ `.env.example`. Hai biến `APP_VARIANT` và `EXPO_PUBLIC_APP_ENV` phải cùng giá trị. Biến `EXPO_PUBLIC_*` được bundle vào ứng dụng và không được chứa secret.
 
 Từ Expo CLI, chọn platform cần chạy hoặc sử dụng trực tiếp:
 
@@ -47,17 +53,22 @@ Project dùng `bun.lock` làm lockfile duy nhất. Không sử dụng npm, Yarn 
 | `bun run android` | Khởi động app trên Android |
 | `bun run web` | Khởi động web app |
 | `bun run lint` | Chạy Expo ESLint |
+| `bun run test` | Chạy Bun tests |
 | `bun run typecheck` | Kiểm tra TypeScript không tạo output |
-| `bun run reset-project` | Xóa hoặc lưu starter source rồi tạo app trống; chỉ chạy khi thực sự muốn reset |
+| `bun run init-project -- --config <file>` | Validate và áp dụng brand config; hỗ trợ `--dry-run` và `--remove-demo` |
 
 ## Cấu trúc project
 
 ```text
 .
+├── app.config.ts            # Dynamic Expo config theo brand/environment
 ├── assets/                  # Icons, splash và static images
+├── config/                  # Brand schema/manifest
 ├── docs/
+│   ├── README.md            # Index của toàn bộ tài liệu
 │   ├── architecture.md      # Ranh giới và dependency rules
-│   └── design-system.md     # Token và Atomic Design conventions
+│   ├── design-system.md     # Token và Atomic Design conventions
+│   └── adr/                 # Architecture decision records
 ├── scripts/                 # Repository maintenance scripts
 └── src/
     ├── app/                 # Expo Router routes và root layout
@@ -160,6 +171,8 @@ Trước khi bàn giao hoặc tạo pull request:
 ```bash
 bun run lint
 bun run typecheck
+bun run test
+bunx expo install --check
 ```
 
 Với thay đổi ảnh hưởng routing hoặc web rendering, kiểm tra thêm production export:
@@ -175,6 +188,8 @@ Comment code phải giải thích lý do, invariant, platform constraint hoặc 
 - [Project architecture](./docs/architecture.md)
 - [Design System](./docs/design-system.md)
 - [Cold-start performance](./docs/cold-start-performance.md)
+- [Base distribution](./docs/distribution.md)
+- [Base changelog](./CHANGELOG.md)
 - [Expo SDK 57 documentation](https://docs.expo.dev/versions/v57.0.0/)
 - [Expo Router](https://docs.expo.dev/router/introduction/)
 - [Expo development builds](https://docs.expo.dev/develop/development-builds/introduction/)

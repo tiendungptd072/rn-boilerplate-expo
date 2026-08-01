@@ -37,6 +37,7 @@ export default function AppTabs() {
         }}
       />
 
+      {/* init-project:explore-demo:start */}
       <Tabs.Screen
         name="explore"
         options={{
@@ -50,6 +51,7 @@ export default function AppTabs() {
           ),
         }}
       />
+      {/* init-project:explore-demo:end */}
     </Tabs>
   );
 }

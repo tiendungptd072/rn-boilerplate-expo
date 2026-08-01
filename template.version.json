@@ -1,0 +1,7 @@
+{
+  "version": "1.1.0",
+  "expoSdk": "57",
+  "reactNative": "0.86.2",
+  "strategy": "versioned-template",
+  "migrationGuide": "docs/migrations/1.1.0.md"
+}

@@ -1,0 +1,9 @@
+{
+  "androidPackage": "com.example.mobileapp",
+  "initialized": false,
+  "iosBundleIdentifier": "com.example.mobileapp",
+  "name": "Mobile App",
+  "scheme": "mobileapp",
+  "slug": "mobile-app",
+  "version": "1.0.0"
+}

@@ -20,9 +20,11 @@ export default function AppTabs() {
           <TabTrigger name="home" href="/" asChild>
             <TabButton>Home</TabButton>
           </TabTrigger>
+          {/* init-project:explore-demo:start */}
           <TabTrigger name="explore" href="/explore" asChild>
             <TabButton>Explore</TabButton>
           </TabTrigger>
+          {/* init-project:explore-demo:end */}
         </CustomTabList>
       </TabList>
     </Tabs>

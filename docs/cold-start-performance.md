@@ -59,6 +59,7 @@ Số byte export không thay thế thời gian cold start thực tế. Repositor
 
 - Gọi `SplashScreen.preventAutoHideAsync()` ở module scope và không `await` để giữ native splash trước khi React mount.
 - Chỉ gọi `SplashScreen.hide()` từ root `onLayout`, sau khi background đúng theme đã sẵn sàng vẽ.
+- Session hydration được hiển thị bằng lightweight boot state bên trong root; SecureStore không được giữ native splash hoặc ngăn first layout.
 - Không chạy fetch, migrate cache, restore session hoặc preload route trước khi ẩn splash trừ khi màn hình đầu tiên không thể render an toàn nếu thiếu dữ liệu đó.
 - Nếu thêm animation khởi động, animation phải nằm sau first frame và tôn trọng reduced motion.
 - Sau thay đổi startup, chạy lại lint, typecheck và Android production export; thay đổi routing/web cần thêm web export.
