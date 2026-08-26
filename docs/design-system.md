@@ -2,9 +2,16 @@
 
 The design system follows Atomic Design. Product code consumes atoms and semantic tokens from `@/design-system`; it must not depend on primitive palette values directly.
 
+## Visual direction and behavior ownership
+
+The visual direction is Modern Neutral: low visual noise, strong typography hierarchy, consistent rhythm, subtle surfaces, minimal shadow, and semantic color. Project tokens own this visual identity. The canonical [HIG behavior standard](./design/hig-behavior.md) owns interaction, touch targets, feedback, keyboard/focus, navigation, modality, gestures, loading, and accessibility behavior.
+
+Behavior constants live in `tokens/behavior.ts`; visual constants remain in color, typography, spacing, shape, elevation, icon, and motion tokens. Never introduce Apple-specific colors solely to imitate iOS.
+
 ```text
 src/design-system/
 ├── atoms/               # Smallest reusable UI units: text, surface, icon, button, radio group
+├── molecules/           # Small compositions such as FormField
 ├── theme/               # Light/dark theme composition and React provider
 └── tokens/
     ├── colors/
@@ -17,7 +24,8 @@ src/design-system/
     ├── shape.ts
     ├── elevation.ts
     ├── icons.ts
-    └── motion.ts
+    ├── motion.ts
+    └── behavior.ts      # Touch target, control sizing, and interaction feedback
 ```
 
 ## Atomic layers
@@ -52,6 +60,10 @@ function Example() {
 ```
 
 The root provider follows the operating-system appearance setting. Expo Router navigation colors are derived from the same semantic theme, so navigation and application UI cannot drift apart.
+
+## Component Gallery
+
+In development, open `/dev/components` to review shared component variants and states. The route is not linked from product navigation and redirects to `/` in production builds. Add a state here when it materially improves visual, behavior, dark-mode, or accessibility QA; do not modify product screens for demonstration.
 
 ## System rules
 

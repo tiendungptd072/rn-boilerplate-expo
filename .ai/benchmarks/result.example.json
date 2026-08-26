@@ -1,0 +1,19 @@
+{
+  "taskId": "auth-bug",
+  "variant": "model-context-skills",
+  "model": "gpt-5.6-sol",
+  "reasoningTier": "CRITICAL",
+  "taskType": "bugfix",
+  "filesOpened": 0,
+  "linesEmitted": 0,
+  "toolCalls": 0,
+  "contextSources": [],
+  "inputTokens": "unavailable",
+  "cachedInputTokens": "unavailable",
+  "outputTokens": "unavailable",
+  "reasoningTokens": "unavailable",
+  "elapsedMs": "unavailable",
+  "verificationResult": "not-run",
+  "taskSuccess": false,
+  "notes": ""
+}

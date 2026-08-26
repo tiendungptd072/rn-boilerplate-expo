@@ -48,7 +48,38 @@ Project dùng `bun.lock` làm lockfile duy nhất. Không sử dụng npm, Yarn 
 | `bun run web` | Khởi động web app |
 | `bun run lint` | Chạy Expo ESLint |
 | `bun run typecheck` | Kiểm tra TypeScript không tạo output |
+| `bun run test:ai` | Chạy test deterministic cho AI Flow và Git Flow |
+| `bun run ai:route -- "<task>"` | Chọn task, model, context, skill và Plan Gate |
+| `bun run ai:doctor` | Kiểm tra cấu hình và tài liệu AI Flow |
+| `bun run git:setup` | Bật Git hooks an toàn cho clone hiện tại |
+| `bun run git:auto -- ...` | Verify, commit và push topic branch với explicit paths |
 | `bun run reset-project` | Xóa hoặc lưu starter source rồi tạo app trống; chỉ chạy khi thực sự muốn reset |
+
+## AI-assisted development flow
+
+AI Flow là lớp tooling deterministic dùng chung cho Codex và Claude Code. Nó phân loại task, áp dụng model safety floor, chọn context/skill tối thiểu, yêu cầu plan theo risk, verify theo tier và chỉ commit các file được khai báo rõ ràng. Các gate không gọi LLM khác.
+
+Thiết lập một lần cho mỗi clone:
+
+```bash
+bun install
+bun run git:setup
+bun run ai:doctor
+bun run git:doctor
+```
+
+Luồng chính:
+
+```bash
+bun run ai:route -- "fix refresh token race condition"
+bun run ai:search -- "refreshToken" src
+bun run ai:checkpoint # chỉ khi task dài
+bun run git:auto -- \
+  --message "fix(auth): serialize token refresh" \
+  --paths src/lib/api-client.ts src/lib/auth/session.ts
+```
+
+Codex đọc `AGENTS.md` và skill được route trong `.agents/skills`. Claude Code dùng `CLAUDE.md`, file này trỏ tới cùng source of truth. Caveman có thể nén context cho task dài nhưng hoàn toàn optional; không cài Caveman thì workflow vẫn hoạt động. Xem [AI workflow](./docs/engineering/ai-workflow.md), [Model Gate](./docs/engineering/model-gate.md), [Context strategy](./docs/engineering/context-strategy.md), [skills](./docs/engineering/skills.md), [Git Flow](./docs/engineering/git-flow.md) và [Caveman](./docs/engineering/caveman.md).
 
 ## Cấu trúc project
 
@@ -174,7 +205,9 @@ Comment code phải giải thích lý do, invariant, platform constraint hoặc 
 
 - [Project architecture](./docs/architecture.md)
 - [Design System](./docs/design-system.md)
+- [HIG behavior standard](./docs/design/hig-behavior.md)
 - [Cold-start performance](./docs/cold-start-performance.md)
+- [AI-assisted development workflow](./docs/engineering/ai-workflow.md)
 - [Expo SDK 57 documentation](https://docs.expo.dev/versions/v57.0.0/)
 - [Expo Router](https://docs.expo.dev/router/introduction/)
 - [Expo development builds](https://docs.expo.dev/develop/development-builds/introduction/)

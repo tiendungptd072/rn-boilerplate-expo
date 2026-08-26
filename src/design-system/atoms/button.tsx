@@ -1,88 +1,93 @@
-import { ActivityIndicator, Pressable, StyleSheet, type PressableProps } from 'react-native';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode } from 'react';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
+import { AppPressable, type AppPressableProps } from './app-pressable';
 import { AppText } from './app-text';
 import { useTheme } from '../theme/theme-provider';
 
-export type ButtonVariant = 'primary' | 'secondary';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
+export type ButtonSize = 'sm' | 'md' | 'lg';
 
-export type ButtonProps = Omit<PressableProps, 'children' | 'disabled'> & {
+export type ButtonProps = Omit<AppPressableProps, 'busy' | 'children' | 'disabled'> & {
   children: ReactNode;
   disabled?: boolean;
+  leadingIcon?: ReactNode;
   loading?: boolean;
+  size?: ButtonSize;
+  trailingIcon?: ReactNode;
   variant?: ButtonVariant;
 };
 
-/**
- * Theme-aware action button with consistent pressed, disabled, loading,
- * keyboard-focus, and accessibility states.
- */
+/** Theme-aware action with stable loading layout and shared interaction semantics. */
 export function Button({
-  accessibilityState,
   children,
   disabled = false,
+  leadingIcon,
   loading = false,
-  onBlur,
-  onFocus,
+  size = 'md',
   style,
+  trailingIcon,
   variant = 'primary',
   ...props
 }: ButtonProps) {
   const theme = useTheme();
-  const [focused, setFocused] = useState(false);
   const colors = theme.components.button[variant];
-  const secondaryColors = theme.components.button.secondary;
-  const unavailable = disabled || loading;
+  const height = theme.behavior.controlHeight[size];
+  const horizontalPadding = size === 'sm' ? theme.spacing.md : theme.spacing.lg;
 
   return (
-    <Pressable
+    <AppPressable
       {...props}
       accessibilityRole="button"
-      accessibilityState={{ ...accessibilityState, busy: loading, disabled: unavailable }}
-      disabled={unavailable}
-      onBlur={(event) => {
-        setFocused(false);
-        onBlur?.(event);
-      }}
-      onFocus={(event) => {
-        setFocused(true);
-        onFocus?.(event);
-      }}
+      busy={loading}
+      disabled={disabled}
       style={(state) => [
         styles.button,
         {
-          backgroundColor: unavailable
+          backgroundColor: disabled
             ? colors.disabled
             : state.pressed
               ? colors.pressed
               : colors.background,
-          borderColor: focused
+          borderColor: state.focused
             ? colors.focusRing
-            : variant === 'secondary'
-              ? unavailable
-                ? secondaryColors.disabledBorder
-                : state.pressed
-                  ? secondaryColors.pressedBorder
-                  : secondaryColors.border
-              : colors.background,
+            : disabled
+              ? colors.disabledBorder
+              : state.pressed
+                ? colors.pressedBorder
+                : colors.border,
           borderRadius: theme.radius.md,
           borderWidth: theme.borderWidth.thin,
           gap: theme.spacing.sm,
-          minHeight: theme.layout.minTouchTarget,
-          paddingHorizontal: theme.spacing.md,
+          minHeight: height,
+          paddingHorizontal: horizontalPadding,
           paddingVertical: theme.spacing.sm,
         },
         typeof style === 'function' ? style(state) : style,
       ]}
     >
-      {loading && <ActivityIndicator color={colors.disabledForeground} size="small" />}
-      <AppText
-        variant="label"
-        style={{ color: unavailable ? colors.disabledForeground : colors.foreground }}
+      {loading && (
+        <ActivityIndicator
+          accessibilityElementsHidden
+          color={colors.foreground}
+          importantForAccessibility="no-hide-descendants"
+          size="small"
+          style={styles.spinner}
+        />
+      )}
+      <View
+        style={[styles.content, { gap: theme.spacing.sm, opacity: loading ? 0 : 1 }]}
       >
-        {children}
-      </AppText>
-    </Pressable>
+        {leadingIcon}
+        <AppText
+          variant={size === 'sm' ? 'label' : 'bodyStrong'}
+          style={{ color: disabled ? colors.disabledForeground : colors.foreground }}
+        >
+          {children}
+        </AppText>
+        {trailingIcon}
+      </View>
+    </AppPressable>
   );
 }
 
@@ -91,5 +96,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
+  },
+  content: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  spinner: {
+    position: 'absolute',
   },
 });

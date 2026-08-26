@@ -36,6 +36,12 @@ export const typography = {
     lineHeight: 32,
     fontWeight: '600',
   },
+  headline: {
+    fontFamily: fontFamilies.sans,
+    fontSize: 20,
+    lineHeight: 28,
+    fontWeight: '600',
+  },
   body: {
     fontFamily: fontFamilies.sans,
     fontSize: 16,
@@ -47,6 +53,12 @@ export const typography = {
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '600',
+  },
+  callout: {
+    fontFamily: fontFamilies.sans,
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: '400',
   },
   bodySmall: {
     fontFamily: fontFamilies.sans,

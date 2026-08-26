@@ -8,6 +8,9 @@ import { primitiveColors as color } from "./primitive";
  */
 export type SemanticColors = {
   background: {
+    /** Transparent background for ghost controls and overlays. */
+    transparent: string;
+
     /** Main application background. */
     canvas: string;
 
@@ -115,6 +118,7 @@ export type SemanticColors = {
 
 export const lightSemanticColors = {
   background: {
+    transparent: "transparent",
     canvas: color.neutral[50],
     surface: color.neutral[0],
     subtle: color.neutral[100],
@@ -166,6 +170,7 @@ export const lightSemanticColors = {
 
 export const darkSemanticColors = {
   background: {
+    transparent: "transparent",
     canvas: color.neutral[950],
     surface: color.neutral[900],
     subtle: color.neutral[800],

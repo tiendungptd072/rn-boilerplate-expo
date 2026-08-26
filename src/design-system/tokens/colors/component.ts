@@ -1,36 +1,26 @@
-import type { SemanticColors } from "./semantic";
+import type { SemanticColors } from './semantic';
 
-/**
- * Component-level color tokens derived from semantic colors.
- *
- * Components should consume these tokens instead of reading semantic or
- * primitive colors directly. This keeps component states consistent across
- * light and dark themes.
- */
+type ButtonColorTokens = {
+  background: string;
+  foreground: string;
+  pressed: string;
+  disabled: string;
+  disabledForeground: string;
+  border: string;
+  pressedBorder: string;
+  disabledBorder: string;
+  focusRing: string;
+};
+
+/** Component state colors derived exclusively from semantic tokens. */
 export type ComponentColorTokens = {
   button: {
-    primary: {
-      background: string;
-      foreground: string;
-      pressed: string;
-      disabled: string;
-      disabledForeground: string;
-      focusRing: string;
-    };
-
-    secondary: {
-      background: string;
-      foreground: string;
-      pressed: string;
-      disabled: string;
-      disabledForeground: string;
-      border: string;
-      pressedBorder: string;
-      disabledBorder: string;
-      focusRing: string;
-    };
+    primary: ButtonColorTokens;
+    secondary: ButtonColorTokens;
+    outline: ButtonColorTokens;
+    ghost: ButtonColorTokens;
+    destructive: ButtonColorTokens;
   };
-
   input: {
     background: string;
     foreground: string;
@@ -46,7 +36,6 @@ export type ComponentColorTokens = {
     helper: string;
     error: string;
   };
-
   radio: {
     background: string;
     foreground: string;
@@ -59,7 +48,6 @@ export type ComponentColorTokens = {
     disabledBorder: string;
     focusRing: string;
   };
-
   card: {
     background: string;
     elevatedBackground: string;
@@ -67,7 +55,6 @@ export type ComponentColorTokens = {
     selectedBackground: string;
     selectedBorder: string;
   };
-
   tabBar: {
     background: string;
     border: string;
@@ -77,7 +64,6 @@ export type ComponentColorTokens = {
     badgeBackground: string;
     badgeForeground: string;
   };
-
   icon: {
     primary: string;
     secondary: string;
@@ -89,17 +75,14 @@ export type ComponentColorTokens = {
     danger: string;
     info: string;
   };
-
   divider: {
     subtle: string;
     default: string;
     strong: string;
   };
-
   overlay: {
     scrim: string;
   };
-
   brandArtwork: {
     gradientStart: string;
     gradientEnd: string;
@@ -108,33 +91,57 @@ export type ComponentColorTokens = {
   };
 };
 
-export function createComponentColorTokens(
-  colors: SemanticColors,
-): ComponentColorTokens {
+export function createComponentColorTokens(colors: SemanticColors): ComponentColorTokens {
+  const unavailable = {
+    disabled: colors.action.disabled,
+    disabledBorder: colors.border.subtle,
+    disabledForeground: colors.content.disabled,
+    focusRing: colors.border.focus,
+  };
+
   return {
     button: {
       primary: {
+        ...unavailable,
         background: colors.action.primary,
+        border: colors.action.primary,
         foreground: colors.content.onAction,
         pressed: colors.action.primaryPressed,
-        disabled: colors.action.disabled,
-        disabledForeground: colors.content.disabled,
-        focusRing: colors.border.focus,
+        pressedBorder: colors.action.primaryPressed,
       },
-
       secondary: {
+        ...unavailable,
         background: colors.action.secondary,
+        border: colors.border.default,
         foreground: colors.content.primary,
         pressed: colors.action.secondaryPressed,
-        disabled: colors.action.disabled,
-        disabledForeground: colors.content.disabled,
-        border: colors.border.default,
         pressedBorder: colors.border.strong,
-        disabledBorder: colors.border.subtle,
-        focusRing: colors.border.focus,
+      },
+      outline: {
+        ...unavailable,
+        background: colors.background.transparent,
+        border: colors.border.default,
+        foreground: colors.content.primary,
+        pressed: colors.action.secondaryPressed,
+        pressedBorder: colors.border.strong,
+      },
+      ghost: {
+        ...unavailable,
+        background: colors.background.transparent,
+        border: colors.background.transparent,
+        foreground: colors.content.brand,
+        pressed: colors.action.secondaryPressed,
+        pressedBorder: colors.background.transparent,
+      },
+      destructive: {
+        ...unavailable,
+        background: colors.feedback.danger,
+        border: colors.feedback.danger,
+        foreground: colors.content.onAction,
+        pressed: colors.feedback.danger,
+        pressedBorder: colors.feedback.danger,
       },
     },
-
     input: {
       background: colors.background.surface,
       foreground: colors.content.primary,
@@ -150,7 +157,6 @@ export function createComponentColorTokens(
       helper: colors.content.secondary,
       error: colors.feedback.danger,
     },
-
     radio: {
       background: colors.background.surface,
       foreground: colors.content.primary,
@@ -163,7 +169,6 @@ export function createComponentColorTokens(
       disabledBorder: colors.border.subtle,
       focusRing: colors.border.focus,
     },
-
     card: {
       background: colors.background.surface,
       elevatedBackground: colors.background.elevated,
@@ -171,7 +176,6 @@ export function createComponentColorTokens(
       selectedBackground: colors.background.selected,
       selectedBorder: colors.border.focus,
     },
-
     tabBar: {
       background: colors.background.surface,
       border: colors.border.subtle,
@@ -181,7 +185,6 @@ export function createComponentColorTokens(
       badgeBackground: colors.feedback.danger,
       badgeForeground: colors.content.onAction,
     },
-
     icon: {
       primary: colors.content.primary,
       secondary: colors.content.secondary,
@@ -193,17 +196,14 @@ export function createComponentColorTokens(
       danger: colors.feedback.danger,
       info: colors.feedback.info,
     },
-
     divider: {
       subtle: colors.border.subtle,
       default: colors.border.default,
       strong: colors.border.strong,
     },
-
     overlay: {
       scrim: colors.overlay.scrim,
     },
-
     brandArtwork: {
       gradientStart: colors.action.primary,
       gradientEnd: colors.action.primaryPressed,

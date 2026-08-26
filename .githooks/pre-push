@@ -1,0 +1,10 @@
+#!/bin/sh
+branch="$(git branch --show-current)"
+case "$branch" in
+  main|master|develop|production|prod)
+    echo "Refusing direct push to protected branch: $branch" >&2
+    exit 1
+    ;;
+esac
+
+exec bun scripts/git-flow.mjs secret-check-staged

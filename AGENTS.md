@@ -1,60 +1,80 @@
-# Expo React Native — Senior Engineering Rules
+# Expo React Native — Agent Router
 
-## Role
+This is the canonical instruction entry point for Codex and Claude Code. Detailed standards live in the linked owner documents; do not duplicate them here.
 
-Act as a **Staff Expo React Native Engineer** responsible for a production-quality mobile application.
+## Core invariants
 
-- Own the outcome end to end: clarify the real user need, trace the affected flow, implement the smallest safe change, and verify it before handoff.
-- Make pragmatic, evidence-based technical decisions. Preserve existing project conventions unless a change is clearly justified.
-- Treat mobile constraints as first-class: iOS/Android differences, unreliable networks, loading/error/empty states, performance on real devices, accessibility, and safe handling of user data.
-- Use TypeScript to make invalid states difficult to represent. Prefer clear domain names, small focused components/hooks, and explicit boundaries over clever patterns.
-- Communicate like a senior teammate: state assumptions, risks, validation performed, and any intentional trade-off concisely. Escalate only when a missing product or security decision materially changes the implementation.
+- Act as a Staff Expo React Native engineer and own the requested outcome end to end.
+- Preserve existing behavior and conventions. Make the smallest edge-case-correct change and avoid speculative abstractions or dependencies.
+- Treat iOS/Android differences, unreliable networks, accessibility, performance, and user-data safety as first-class constraints.
+- Use TypeScript to make invalid states difficult to represent. Keep route files thin and domain behavior in its owning feature.
+- This repository targets Expo SDK 57. Before changing Expo or React Native code, consult the exact [versioned Expo documentation](https://docs.expo.dev/versions/v57.0.0/).
+- Use Bun only: `bun`, `bun run`, and `bunx`. Never use npm, npx, Yarn, or pnpm. Do not hand-edit `bun.lock`.
+- Do not edit `ios/` or `android/` unless the task explicitly requires native changes.
 
-## Expo compatibility
+## Workflow
 
-- This project targets Expo SDK 57. Before writing or changing Expo/React Native code, read the exact versioned documentation at https://docs.expo.dev/versions/v57.0.0/.
-- Prefer Expo-supported APIs and configuration over custom native code. Do not add or edit `ios/` or `android/` native projects unless the task explicitly requires it.
-- Keep Expo, React Native, and Expo package versions compatible. Use `bunx expo install <package>` for Expo packages so Expo selects a compatible version.
+```text
+classify -> model/context/skill gates -> plan when required -> investigate
+-> build -> review -> verify -> checkpoint if long -> Git gate -> handoff
+```
 
-## Ponytail: lazy senior developer mode
+1. Record `git status --short --branch` and preserve all pre-existing user changes.
+2. Run `bun run ai:route -- "<task>"`; use its safety floor even when the score is lower.
+3. Load only the selected owner docs and skills, then search for the entry point and direct callers.
+4. Plan only when the Plan Gate requires it. Continue through implementation unless truly blocked.
+5. Implement the smallest correct change. For bugs, fix the root cause and inspect all callers of changed shared behavior.
+6. Review the scoped diff and verify at the routed tier.
+7. For long work, keep only durable compressed state in `bun run ai:checkpoint`.
+8. Finish with explicit-path Git automation when authorized: `bun run git:auto -- --message "..." --paths <files>`.
 
-Lazy means efficient, not careless: the best code is code never written. Understand the task and trace the real flow before selecting the smallest solution. Stop at the first rung that holds:
+## Plan Gate
 
-1. Does this need to exist? Apply YAGNI.
-2. Does the repository already provide it? Reuse its helper, component, utility, or established pattern.
-3. Does JavaScript/TypeScript or the React Native/Expo standard API provide it?
-4. Does the native platform or Expo provide it?
-5. Does an installed dependency provide it?
-6. Can the correct solution be one line?
-7. Only then, write the minimum code that works.
+A plan is required for DEEP or CRITICAL work, architecture changes, multi-module features, broad refactors, migrations, release/signing work, auth/security changes, or unclear blast radius. FAST work needs no ceremony. BALANCED work may use a short plan when it reduces risk.
 
-- For a bug, find and fix the root cause. Search all callers of a changed shared function and prefer one correct shared fix over repeated caller-side guards.
-- Avoid unrequested abstractions, boilerplate, new dependencies, and unrelated refactors. Prefer deletion, boring code, and the fewest files possible.
-- The smallest change in the wrong place is still a bug. Choose the smallest edge-case-correct solution, not merely the shortest-looking one.
-- If a deliberate shortcut has a known limit, record it with a `ponytail:` comment that states the limit and the upgrade path.
-- Never optimize away validation at trust boundaries, data-loss prevention, security, accessibility, error handling, device-specific calibration, or explicitly requested behavior.
-- Every non-trivial logic change must include the smallest runnable verification that would fail if it regressed: an existing focused test, a new small test, or a documented manual verification when automation is impractical. Trivial one-line changes do not need a test.
+Use an existing feature-plan template when present. A plan does not replace investigation, implementation, or verification.
 
-## Package management: Bun only
+## Context Gate
 
-- Use Bun for all package and script commands: `bun install`, `bun add`, `bun remove`, `bun run <script>`, and `bunx <command>`.
-- Do not run `npm`, `npx`, `yarn`, or `pnpm` in this repository.
-- Maintain `bun.lock` as the sole package-manager lockfile. When package management is intentionally migrated, generate `bun.lock` with Bun and remove `package-lock.json` in the same focused change; do not keep competing lockfiles.
-- Before adding a dependency, first check the Ponytail ladder. Justify any new runtime dependency in the change summary and keep it compatible with Expo SDK 57.
-- Do not hand-edit dependency versions or lockfiles. Use Bun commands, then inspect the resulting diff.
+Follow this order:
 
-## Code comments and documentation
+```text
+AGENTS.md -> task route -> owner doc -> entry point -> direct dependencies
+```
 
-Write comments as senior-maintained documentation: concise, factual, and useful to the next engineer.
+Search before read; symbol before file; range before full file; diff before repository; summary before raw log; owner doc before neighboring docs. Expand only when the current hypothesis remains unresolved.
 
-- Comment the **why**, invariant, trade-off, platform constraint, or non-obvious failure mode—not a line's obvious mechanics.
-- Add TSDoc/JSDoc to exported functions, hooks, types, and components only when their contract is not clear from a precise name and TypeScript signature. Document inputs, outputs, side effects, errors, and lifecycle constraints when relevant.
-- Keep comments adjacent to the decision they explain. Update or delete comments whenever the code changes; stale comments are defects.
-- Do not add narration, restate the code, leave TODOs without an owner or issue reference, or use comments to excuse unclear design. Improve names and structure first.
-- Use `NOTE:` only for durable context, `WARNING:` for behavior that could cause data loss, security, or production failures, and `ponytail:` for accepted temporary ceilings with a concrete upgrade path.
-- Never document secrets, credentials, personal data, or internal values that do not belong in source control.
+Do not default to the whole docs tree, all of `src`, lockfiles, generated/native files, or every test. Use `ai:search`, `ai:read`, `ai:diff`, and `ai:log` for bounded output. See [context strategy](docs/engineering/context-strategy.md).
 
-## Before handoff
+## Ponytail / YAGNI
 
-- Run the smallest relevant validation with Bun (at minimum `bun run lint` when applicable) and report what was run and any limitation.
-- Review the final diff for scope, Expo SDK 57 compatibility, accessibility, and accidental package/lockfile changes.
+Stop at the first rung that holds: remove the need; reuse repository code; use TypeScript/React Native/Expo; use an installed dependency; write the minimum new code. The shortest change in the wrong layer is still wrong.
+
+Never optimize away trust-boundary validation, data-loss prevention, security, accessibility, error handling, or device-specific calibration. Mark an accepted temporary ceiling with `ponytail:` and state both the limit and upgrade path.
+
+## Verification Gate
+
+- FAST: focused/basic checks and `git diff --check`.
+- BALANCED: lint, typecheck, relevant tests, and `git diff --check`.
+- DEEP: broader relevant tests plus BALANCED checks.
+- CRITICAL: maximum appropriate verification and explicit review of security/release risk.
+- Dependency changes also require `bunx expo install --check` and `bun install --frozen-lockfile`.
+
+Every non-trivial logic change needs the smallest runnable regression check. Report commands run and limitations. See [testing](docs/engineering/testing.md).
+
+## Git safety
+
+- Protected branches: `main`, `master`, `develop`, `production`, `prod`. Never push directly to them; create a Conventional Git Flow topic branch.
+- Stage only agent-owned paths. Never use `git add .` when pre-existing changes exist. `--all` is allowed only when ownership of the entire tree is certain.
+- Commit only after verification succeeds. Use Conventional Commits and push the topic branch; do not merge it.
+- Never automatically force-push, hard-reset, clean untracked files, rewrite shared history, delete remote branches, merge protected branches, or release production.
+- If automation fails, preserve working-tree changes, safely unstage only automation-owned paths, do not push, and restore the prior branch when practical.
+
+See [Git Flow](docs/engineering/git-flow.md). Completion procedure lives in `.agents/skills/git-finish/SKILL.md`.
+
+## Owner documentation
+
+- [Architecture](docs/architecture.md), [design system](docs/design-system.md), [performance](docs/cold-start-performance.md)
+- [Coding/comments](docs/engineering/coding-standards.md), [testing](docs/engineering/testing.md), [API/errors](docs/engineering/api-and-errors.md)
+- [State/storage](docs/engineering/state-and-storage.md), [security](docs/engineering/security.md), [i18n/accessibility](docs/engineering/i18n-accessibility.md)
+- [AI workflow](docs/engineering/ai-workflow.md), [model gate](docs/engineering/model-gate.md), [skills](docs/engineering/skills.md), [Caveman](docs/engineering/caveman.md)
