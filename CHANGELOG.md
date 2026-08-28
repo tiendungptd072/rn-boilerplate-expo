@@ -1,22 +1,18 @@
 # Changelog
 
-Các thay đổi của base tuân theo Semantic Versioning. Phiên bản ứng dụng của từng fork được quản lý độc lập trong `config/brand.json`.
-
-## 1.1.0 — 2026-08-01
-
-### Breaking changes
-
-- Thay `app.json` bằng typed dynamic `app.config.ts` và brand manifest.
-- Thay destructive `reset-project` bằng fail-closed `init-project` có dry-run.
-- API consumers nhận normalized `ApiError` thay vì raw Axios error.
-- Terminal 401 luôn kết thúc session; refresh requests dùng chung một promise.
+## 1.4.0 - 2026-08-27
 
 ### Added
 
-- Dev/preview/production có application ID, scheme và EAS channel riêng.
-- Runtime public environment được validate bằng Zod.
-- Root render lightweight boot state trong lúc SecureStore hydrate.
-- Bun tests cho auth race, terminal 401, error mapping và initializer tooling.
-- Versioned-template distribution contract và CI quality gate.
+- Deterministic model, task, context, skill, and Plan Gates with centralized policy.
+- Token-bounded search, read, diff, and log tools plus lightweight task checkpoints.
+- Reusable Codex and Claude Code skills for common React Native engineering workflows.
+- Transactional Git Flow automation with topic branches, explicit-path staging, secret checks, protected-branch guards, Conventional Commits, and verification tiers.
+- AI doctor checks, representative benchmark fixtures, and deterministic tooling tests.
+- HIG-aligned behavior tokens, AppPressable, expanded Button, IconButton, TextField, FormField, and a development Component Gallery.
+- Design-system UI audit, canonical HIG behavior rules, component specs, and selective `ui-component` routing.
 
-Migration: [docs/migrations/1.1.0.md](docs/migrations/1.1.0.md).
+### Changed
+
+- Reduced `AGENTS.md` to a canonical workflow router and kept `CLAUDE.md` as a reference.
+- Documented progressive context loading and optional Caveman compression without making it a project dependency.

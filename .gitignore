@@ -38,6 +38,10 @@ yarn-error.*
 
 example
 
+# AI Flow transient state and benchmark output
+/.ai/state/
+/.ai/reports/
+
 # generated native folders
 /ios
 /android

@@ -1,0 +1,2 @@
+#!/bin/sh
+exec bun scripts/git-flow.mjs validate-message "$1"

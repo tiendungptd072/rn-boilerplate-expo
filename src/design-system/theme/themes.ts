@@ -1,4 +1,5 @@
 import { createComponentColorTokens } from "@/design-system/tokens/colors/component";
+import { behavior } from "@/design-system/tokens/behavior";
 import {
   darkSemanticColors,
   lightSemanticColors,
@@ -25,6 +26,7 @@ function createTheme<TMode extends ThemeMode>(
 
     colors,
     components: createComponentColorTokens(colors),
+    behavior,
 
     typography,
     spacing,

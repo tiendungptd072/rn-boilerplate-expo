@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "models": {
+    "FAST": { "codex": "gpt-5.6-luna", "reasoning": "low" },
+    "BALANCED": { "codex": "gpt-5.6-terra", "reasoning": "medium" },
+    "DEEP": { "codex": "gpt-5.6-sol", "reasoning": "high" },
+    "CRITICAL": { "codex": "gpt-5.6-sol", "reasoning": "xhigh" }
+  },
+  "contextBudgets": {
+    "FAST": { "sources": 4, "lines": 300 },
+    "BALANCED": { "sources": 8, "lines": 800 },
+    "DEEP": { "sources": 14, "lines": 1600 },
+    "CRITICAL": { "sources": 20, "lines": 2400 }
+  },
+  "protectedBranches": ["main", "master", "develop", "production", "prod"],
+  "owners": {
+    "architecture": "docs/architecture.md",
+    "codingStandards": "docs/engineering/coding-standards.md",
+    "comments": "docs/engineering/coding-standards.md",
+    "testing": "docs/engineering/testing.md",
+    "apiErrors": "docs/engineering/api-and-errors.md",
+    "stateStorage": "docs/engineering/state-and-storage.md",
+    "security": "docs/engineering/security.md",
+    "i18nAccessibility": "docs/engineering/i18n-accessibility.md",
+    "performance": "docs/cold-start-performance.md",
+    "designSystem": "docs/design-system.md",
+    "higBehavior": "docs/design/hig-behavior.md",
+    "uiAudit": "docs/design/ui-audit.md",
+    "git": "docs/engineering/git-flow.md",
+    "aiWorkflow": "docs/engineering/ai-workflow.md",
+    "modelGate": "docs/engineering/model-gate.md",
+    "context": "docs/engineering/context-strategy.md",
+    "skills": "docs/engineering/skills.md",
+    "caveman": "docs/engineering/caveman.md"
+  },
+  "verification": {
+    "FAST": ["git diff --check"],
+    "BALANCED": ["bun run lint", "bun run typecheck", "git diff --check"],
+    "DEEP": ["bun run lint", "bun run typecheck", "bun run test:ai", "git diff --check"],
+    "CRITICAL": ["bun run lint", "bun run typecheck", "bun run test:ai", "git diff --check"]
+  },
+  "domainVerification": {
+    "design-system": ["bun run test:ui"]
+  }
+}

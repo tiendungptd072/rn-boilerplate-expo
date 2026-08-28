@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "tasks": [
+    { "id": "typo", "prompt": "Fix a typo in README", "expectedTier": "FAST", "success": "Only the typo changes and basic checks pass" },
+    { "id": "small-component", "prompt": "Add a small accessible status badge component", "expectedTier": "BALANCED", "success": "Component uses tokens, accessibility state, and focused tests" },
+    { "id": "feature", "prompt": "Add a settings screen for notification preferences", "expectedTier": "BALANCED", "success": "Feature acceptance checks pass on affected platforms" },
+    { "id": "api", "prompt": "Integrate a profile API endpoint with runtime validation", "expectedTier": "BALANCED", "success": "Typed mapping and success/error tests pass" },
+    { "id": "known-bug", "prompt": "Fix the known submit button double-tap bug", "expectedTier": "BALANCED", "success": "Regression test reproduces and verifies the fix" },
+    { "id": "unknown-bug", "prompt": "Investigate an unknown intermittent startup crash", "expectedTier": "DEEP", "success": "Root cause is evidenced and regression coverage passes" },
+    { "id": "auth-bug", "prompt": "Fix refresh token race condition", "expectedTier": "CRITICAL", "success": "Session concurrency and failure-path tests pass" },
+    { "id": "refactor", "prompt": "Refactor state ownership across multiple features", "expectedTier": "DEEP", "success": "Observable behavior is preserved and complexity falls" },
+    { "id": "expo-upgrade", "prompt": "Upgrade Expo SDK and compatible dependencies", "expectedTier": "CRITICAL", "success": "Expo compatibility and platform checks pass" },
+    { "id": "performance", "prompt": "Investigate a cold start performance regression", "expectedTier": "DEEP", "success": "Comparable measurements improve without regressions" },
+    { "id": "release", "prompt": "Prepare and sign the production release", "expectedTier": "CRITICAL", "success": "Release verification passes without automatic production release" }
+  ]
+}
