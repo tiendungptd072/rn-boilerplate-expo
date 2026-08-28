@@ -5,7 +5,7 @@ import { Stack } from 'expo-router';
 import { useCallback, useRef } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
-import { useTheme } from '@/design-system/theme/theme-provider';
+import { useTheme } from '@/design-system';
 import { useLocalization } from '@/i18n';
 import { useSession } from '@/lib/auth/session-provider';
 import { AppProviders } from '@/providers/app-providers';

@@ -4,7 +4,7 @@ import { AppPressable, type AppPressableProps } from './app-pressable';
 import { Icon, type IconName } from './icon';
 import { useTheme } from '../theme/theme-provider';
 
-export type IconButtonVariant = 'secondary' | 'ghost' | 'destructive';
+export type IconButtonVariant = 'primary' | 'secondary' | 'ghost' | 'destructive';
 export type IconButtonSize = 'sm' | 'md' | 'lg';
 
 export type IconButtonProps = Omit<
@@ -36,7 +36,7 @@ export function IconButton({
   const iconSize = size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md';
   const iconTone = disabled
     ? 'disabled'
-    : variant === 'destructive'
+    : variant === 'primary' || variant === 'destructive'
       ? 'inverse'
       : variant === 'ghost'
         ? 'brand'
@@ -73,7 +73,11 @@ export function IconButton({
       ]}
     >
       {loading ? (
-        <ActivityIndicator color={colors.foreground} size="small" />
+        <ActivityIndicator
+          accessibilityElementsHidden
+          color={colors.foreground}
+          size="small"
+        />
       ) : (
         <Icon name={icon} size={iconSize} tone={iconTone} />
       )}

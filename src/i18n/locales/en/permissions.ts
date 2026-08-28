@@ -1,0 +1,18 @@
+export const enPermissions = {
+  'permissions.camera.title': 'Camera access',
+  'permissions.camera.reason': 'Allow camera access to take photos and scan codes.',
+  'permissions.location.title': 'Location access',
+  'permissions.location.reason': 'Allow location access for location-based features.',
+  'permissions.microphone.title': 'Microphone access',
+  'permissions.microphone.reason': 'Allow microphone access when a feature needs audio input.',
+  'permissions.checking': 'Checking permission...',
+  'permissions.requestable': 'Permission is required to continue.',
+  'permissions.requesting': 'Requesting permission...',
+  'permissions.blocked': 'Permission is blocked. Enable it in the app settings.',
+  'permissions.unsupported': 'This capability is unavailable on this device or browser.',
+  'permissions.error': 'Permission status could not be checked.',
+  'permissions.granted': 'Permission granted.',
+  'permissions.actionError': 'The permission action failed. Please try again.',
+  'permissions.allow': 'Allow access',
+  'permissions.openSettings': 'Open settings',
+} as const;

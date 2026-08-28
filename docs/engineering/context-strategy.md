@@ -1,20 +1,42 @@
 # Context strategy
 
-The Context Gate minimizes tokens without sacrificing evidence. Start with:
+Context is loaded progressively. The goal is enough evidence for correctness, not maximum repository coverage.
+
+## Order
 
 ```text
-AGENTS.md -> ai:route -> owner docs -> entry point -> direct dependencies
+AGENTS.md
+owner document
+source entry point
+direct dependencies and callers
+nearest relevant tests
+broader context only when unresolved
 ```
 
-Apply these rules in order: search before read; symbol before file; range before full file; diff before repository; summary before raw log; owner doc before neighboring docs. Expand only when the current question remains unresolved.
+Use search before read, symbol before file, range before full file, diff before repository, and summary before raw log.
 
-The router returns maximum source and emitted-line budgets by tier. They are exploration defaults, not permission to omit evidence needed for correctness. Use `--limit`, `--max`, or a wider range explicitly when the hypothesis requires it.
+## Default budgets
 
-Bounded helpers:
+These are exploration defaults, not hard limits:
 
-- `ai:search`: ripgrep with generated/native/lockfile exclusions and 50-result default.
-- `ai:read`: 160-line default; supports `--lines START:END` and `--around TEXT`.
-- `ai:diff`: stat by default; `--full` or path scope is explicit.
-- `ai:log`: 8 commits by default, capped at 50.
+| Tier | Sources | Emitted lines |
+| --- | ---: | ---: |
+| FAST | 2 | 160 |
+| BALANCED | 6 | 600 |
+| DEEP | 10 | 1200 |
+| CRITICAL | 16 | 2000 |
 
-Do not preload all docs, all source, lockfiles, generated/native files, full logs, or all tests. For long tasks, write durable facts to the ignored `.ai/state/current-task.md`; never copy conversation history or secrets.
+Count owner docs, source files, tests, and external references as sources. Expand only when the current hypothesis remains unresolved or correctness requires more evidence.
+
+## Repository tools
+
+- Use `rg` or `rg --files` for discovery.
+- Read a relevant range with `sed -n` instead of dumping large files.
+- Scope `git diff` to task-owned paths when the tree contains unrelated work.
+- Exclude `bun.lock`, generated output, `ios/`, and `android/` unless the task directly owns them.
+
+## Stop rules
+
+Stop expanding context when the entry point, ownership, affected callers, failure mode, and verification path are known. Do not preload the full docs tree, all of `src`, every test, full Git history, or every available skill.
+
+For long sessions, retain durable decisions and discard repeated narration or raw output. Caveman can reduce response prose but does not replace selective context loading.

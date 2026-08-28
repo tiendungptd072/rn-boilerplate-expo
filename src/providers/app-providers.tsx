@@ -5,9 +5,9 @@ import { type PropsWithChildren, useMemo } from 'react';
 
 import {
   AppThemeProvider,
+  useTheme,
   useThemeSettings,
-} from '@/design-system/theme/app-theme-provider';
-import { useTheme } from '@/design-system/theme/theme-provider';
+} from '@/design-system';
 import { LocalizationProvider } from '@/i18n/localization-provider';
 import {
   type RefreshAccessToken,

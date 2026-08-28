@@ -2,17 +2,38 @@ import { type PropsWithChildren, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
-import { AppText, Icon, motion, radius, spacing, Surface } from '@/design-system';
+import {
+  AppText,
+  Icon,
+  layout,
+  motion,
+  radius,
+  spacing,
+  Surface,
+  useTheme,
+} from '@/design-system';
 
 export function Collapsible({ children, title }: PropsWithChildren & { title: string }) {
+  const theme = useTheme();
   const [isOpen, setIsOpen] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   return (
     <View>
       <Pressable
         accessibilityRole="button"
         accessibilityState={{ expanded: isOpen }}
-        style={({ pressed }) => [styles.heading, pressed && styles.pressedHeading]}
+        onBlur={() => setFocused(false)}
+        onFocus={() => setFocused(true)}
+        style={({ pressed }) => [
+          styles.heading,
+          {
+            backgroundColor: pressed ? theme.colors.background.selected : undefined,
+            borderColor: focused ? theme.colors.border.focus : 'transparent',
+            borderRadius: theme.radius.sm,
+            borderWidth: theme.borderWidth.thin,
+          },
+        ]}
         onPress={() => setIsOpen((value) => !value)}>
         <Surface tone="subtle" style={styles.button}>
           <Icon
@@ -41,10 +62,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    minHeight: 44,
-  },
-  pressedHeading: {
-    opacity: 0.7,
+    minHeight: layout.minTouchTarget,
   },
   button: {
     width: spacing.lg,

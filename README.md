@@ -99,6 +99,8 @@ Codex đọc `AGENTS.md` và skill được route trong `.agents/skills`. Claude
 │   ├── README.md            # Index của toàn bộ tài liệu
 │   ├── architecture.md      # Ranh giới và dependency rules
 │   ├── design-system.md     # Token và Atomic Design conventions
+│   ├── engineering/         # AI Flow và engineering standards
+│   ├── guides/              # Hướng dẫn theo workflow
 │   └── adr/                 # Architecture decision records
 ├── scripts/                 # Repository maintenance scripts
 └── src/
@@ -216,11 +218,20 @@ Comment code phải giải thích lý do, invariant, platform constraint hoặc 
 
 ## Tài liệu
 
+- [Engineering wiki](./docs/README.md)
 - [Project architecture](./docs/architecture.md)
 - [Design System](./docs/design-system.md)
 - [HIG behavior standard](./docs/design/hig-behavior.md)
 - [Cold-start performance](./docs/cold-start-performance.md)
-- [AI-assisted development workflow](./docs/engineering/ai-workflow.md)
+- [Coding standards](./docs/engineering/coding-standards.md)
+- [Git flow](./docs/engineering/git-flow.md)
+- [Add a screen](./docs/guides/add-a-screen.md)
+- [Security](./docs/engineering/security.md)
+- [Caveman](./docs/engineering/caveman.md)
+- [AI workflow](./docs/engineering/ai-workflow.md)
+- [Model gate](./docs/engineering/model-gate.md)
+- [Context strategy](./docs/engineering/context-strategy.md)
+- [Testing](./docs/engineering/testing.md)
 - [Expo SDK 57 documentation](https://docs.expo.dev/versions/v57.0.0/)
 - [Expo Router](https://docs.expo.dev/router/introduction/)
 - [Expo development builds](https://docs.expo.dev/develop/development-builds/introduction/)

@@ -4,12 +4,7 @@ import { Platform, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { WebBadge } from '@/components/web-badge';
-import { AppText } from '@/design-system/atoms/app-text';
-import { Button } from '@/design-system/atoms/button';
-import { Surface } from '@/design-system/atoms/surface';
-import { layout } from '@/design-system/tokens/layout';
-import { radius } from '@/design-system/tokens/shape';
-import { spacing } from '@/design-system/tokens/spacing';
+import { AppText, Button, layout, radius, spacing, Surface } from '@/design-system';
 import { HintRow } from '@/features/home/components/hint-row';
 import { useLocalization } from '@/i18n';
 import { useSession } from '@/lib/auth/session-provider';

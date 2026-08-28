@@ -80,6 +80,12 @@ export type SemanticColors = {
     /** Pressed state for a secondary action. */
     secondaryPressed: string;
 
+    /** Destructive action fill. */
+    destructive: string;
+
+    /** Pressed state for a destructive action. */
+    destructivePressed: string;
+
     /** Disabled action fill. */
     disabled: string;
   };
@@ -149,6 +155,8 @@ export const lightSemanticColors = {
     primaryPressed: color.blue[700],
     secondary: color.neutral[100],
     secondaryPressed: color.neutral[200],
+    destructive: color.red[600],
+    destructivePressed: color.red[700],
     disabled: color.neutral[200],
   },
 
@@ -201,6 +209,8 @@ export const darkSemanticColors = {
     primaryPressed: color.blue[600],
     secondary: color.whiteAlpha[8],
     secondaryPressed: color.whiteAlpha[16],
+    destructive: color.red[500],
+    destructivePressed: color.red[600],
     disabled: color.whiteAlpha[8],
   },
 

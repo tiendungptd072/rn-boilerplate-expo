@@ -10,7 +10,7 @@ Behavior constants live in `tokens/behavior.ts`; visual constants remain in colo
 
 ```text
 src/design-system/
-├── atoms/               # Smallest reusable UI units: text, surface, icon, button, radio group
+├── atoms/               # Reusable UI primitives independent of product and form libraries
 ├── molecules/           # Small compositions such as FormField
 ├── theme/               # Light/dark theme composition and React provider
 └── tokens/
@@ -30,10 +30,21 @@ src/design-system/
 
 ## Atomic layers
 
-- **Atoms** live in `design-system/atoms` and expose theme-aware primitives such as `AppText`, `Surface`, `Icon`, `Button`, and `RadioGroup`.
+- **Atoms** live in `design-system/atoms` and expose theme-aware primitives such as `AppText`, `Surface`, `Card`, `Icon`, `Button`, `TextField`, `Select`, `Checkbox`, `Toggle`, and `RadioGroup`.
 - **Molecules** combine atoms into a small interaction pattern. Keep a molecule inside its feature until at least two features share it; then promote it to `design-system/molecules`.
 - **Organisms** are larger reusable sections. Apply the same promotion rule rather than creating an empty global catalog.
 - **Templates and pages** belong to feature screens and Expo Router routes, respectively.
+
+## Shared application patterns
+
+Application-aware shared components live outside the design-system package and compose its public atoms:
+
+- `src/components/async-list` renders normalized infinite-query states. Feature hooks still own query keys, API calls, runtime schemas, cursor rules, and safe error mapping. Do not pass raw transport errors to the list.
+- `src/components/permissions` renders permission rationale and recovery states. Features own native permission hooks and request permission only after a user action.
+
+`AsyncList` preserves cached data during refresh and pagination failures. It requires a stable `keyExtractor`, prevents overlapping page requests through its TanStack Query adapter, and keeps disabled queries out of an indefinite loading state.
+
+`PermissionGuide` maps requestable, blocked, unsupported, error, and granted states without importing camera, microphone, or location modules. Add a native permission dependency and config plugin only with the feature that requires it.
 
 ## Color contract
 
@@ -73,3 +84,5 @@ In development, open `/dev/components` to review shared component variants and s
 - Radius, border width, and elevation are separate systems. Do not use spacing tokens as radii.
 - Icons are referenced by semantic names through `Icon`; platform-specific SF Symbol and Material Symbol names stay inside its registry.
 - Motion uses shared duration, easing, spring, and system reduced-motion tokens. New animations must honor the reduced-motion policy.
+- Shared input primitives must remain controlled and independent of form libraries. Adapters in `src/components/form` connect them to React Hook Form and own validation messages, required labels, and field-level localization.
+- Review component variants and interaction states in the component showcase on the Explore screen before migrating feature consumers. Follow the [component visual QA checklist](engineering/component-visual-qa.md) for the required platform and accessibility matrix.

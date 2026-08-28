@@ -1,12 +1,44 @@
-# API and error handling
+# API and errors
 
-The configured client in `src/lib` owns transport defaults; feature API modules own endpoint mapping. TanStack Query owns remote cache and request lifecycle. Do not duplicate server state in Zustand.
+The shared Axios clients in `src/lib/api-client.ts` own transport configuration and authenticated retry behavior. Features own endpoint functions, runtime schemas, query keys, and domain error mapping.
 
-- Validate untrusted response and persisted data at the boundary with Zod when malformed input could escape into domain code.
-- Convert transport shapes to domain types before UI consumption.
-- Support cancellation and distinguish offline, timeout, authorization, validation, and server failures when the user action differs.
-- Retry only idempotent transient failures, with a finite policy. Never re-enter terminal authentication refresh loops.
-- Do not expose raw backend messages, tokens, personal data, request headers, or stack traces to users or logs.
-- Mutations that can duplicate effects require an explicit idempotency decision.
+## Client ownership
 
-UI must provide appropriate loading, empty, error, and retry states without discarding usable cached data.
+- Use `publicApiClient` for login, refresh, and other public endpoints.
+- Use `apiClient` for authenticated endpoints.
+- Configure session refresh through `configureApiAuth`; refresh callbacks must use the public client to avoid interceptor recursion.
+- Keep access tokens in the session layer. Do not let screens set authorization headers directly.
+- Preserve the configured timeout unless an endpoint has a measured, documented need.
+
+## Feature boundary
+
+Place remote data inside the owning feature:
+
+```text
+src/features/<feature>/
+├── api/
+├── schemas/
+└── hooks/
+```
+
+Validate untrusted response data with Zod before exposing it to product UI. Convert transport payloads into domain types at this boundary; do not spread backend naming or nullable uncertainty through components.
+
+## TanStack Query
+
+Use TanStack Query for server state, caching, retries, invalidation, and request lifecycle. The shared client already tracks network and app focus. Client errors in the 4xx range are not retried by default; other query failures receive at most one retry. Mutations are not retried automatically.
+
+Use stable feature-owned query keys. Invalidate the narrowest affected key after mutation. Do not mirror Query data into Zustand.
+
+## Errors
+
+- Preserve rejected promises for Query and mutation error states.
+- Map transport errors to a small feature/domain error union before rendering.
+- Show localized, actionable messages; never display raw Axios errors or backend stack traces.
+- Distinguish offline, timeout, unauthorized, validation, not-found, conflict, rate-limit, and unknown failures when user recovery differs.
+- Log only approved diagnostic metadata. Redact headers, tokens, cookies, credentials, and sensitive payload fields.
+
+## Auth failures
+
+The authenticated client retries a request at most once after a serialized token refresh. A terminal unauthorized result clears in-memory session state through the configured callback. Tests must cover concurrent 401 requests, refresh failure, explicit authorization headers, and logout races when this behavior changes.
+
+Security-sensitive transport changes also follow [Security](security.md).
