@@ -9,12 +9,19 @@ import {
 } from '@/design-system/theme/app-theme-provider';
 import { useTheme } from '@/design-system/theme/theme-provider';
 import { LocalizationProvider } from '@/i18n/localization-provider';
-import { SessionProvider } from '@/lib/auth/session-provider';
+import {
+  type RefreshAccessToken,
+  SessionProvider,
+} from '@/lib/auth/session-provider';
 import { queryClient } from '@/lib/query-client';
 
-export function AppProviders({ children }: PropsWithChildren) {
+type AppProvidersProps = PropsWithChildren<{
+  refreshAccessToken?: RefreshAccessToken;
+}>;
+
+export function AppProviders({ children, refreshAccessToken }: AppProvidersProps) {
   return (
-    <SessionProvider>
+    <SessionProvider refreshAccessToken={refreshAccessToken}>
       <LocalizationProvider>
         <AppThemeProvider>
           <ThemedAppProviders>{children}</ThemedAppProviders>

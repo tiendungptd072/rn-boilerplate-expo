@@ -1,0 +1,8 @@
+{
+  "androidPackage": "com.example.myapp",
+  "iosBundleIdentifier": "com.example.myapp",
+  "name": "My App",
+  "scheme": "myapp",
+  "slug": "my-app",
+  "version": "1.0.0"
+}

@@ -63,7 +63,11 @@ export default function HomeScreen() {
           <HintRow title="Dev tools" hint={getDevMenuHint()} />
           <HintRow
             title="Fresh start"
-            hint={<AppText variant="code">bun run reset-project</AppText>}
+            hint={
+              <AppText variant="code">
+                bun run init-project -- --config config/brand.example.json --dry-run
+              </AppText>
+            }
           />
         </Surface>
 

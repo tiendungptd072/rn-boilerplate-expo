@@ -8,6 +8,7 @@ import { LanguageSettings } from '@/components/language-settings';
 import { Collapsible } from '@/components/ui/collapsible';
 import { WebBadge } from '@/components/web-badge';
 import { AppText, Icon, layout, radius, spacing, Surface } from '@/design-system';
+import { FormShowcase } from '@/features/explore/components/form-showcase';
 
 export default function ExploreScreen() {
   const safeAreaInsets = useSafeAreaInsets();
@@ -33,6 +34,7 @@ export default function ExploreScreen() {
       <ScrollView
         style={styles.scrollView}
         contentInset={insets}
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={[styles.contentContainer, contentPlatformStyle]}>
         <View style={styles.container}>
         <View style={styles.titleContainer}>
@@ -57,6 +59,8 @@ export default function ExploreScreen() {
         </View>
 
         <View style={styles.sectionsWrapper}>
+          <FormShowcase />
+
           <Collapsible title="File-based routing">
             <AppText variant="bodySmall">
               Route files stay in <AppText variant="code">src/app</AppText>, while screen code lives

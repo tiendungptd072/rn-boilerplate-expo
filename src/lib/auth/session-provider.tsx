@@ -15,6 +15,12 @@ import {
 
 import { getStoredSession, storeSession } from './session-storage';
 
+export type RefreshAccessToken = () => Promise<string | null>;
+
+type SessionProviderProps = PropsWithChildren<{
+  refreshAccessToken?: RefreshAccessToken;
+}>;
+
 type SessionContextValue = {
   isLoading: boolean;
   session: string | null;
@@ -25,7 +31,7 @@ type SessionContextValue = {
 const SessionContext = createContext<SessionContextValue | null>(null);
 
 /** Restores and exposes the persisted authentication session. */
-export function SessionProvider({ children }: PropsWithChildren) {
+export function SessionProvider({ children, refreshAccessToken }: SessionProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [session, setSession] = useState<string | null>(null);
 
@@ -60,10 +66,21 @@ export function SessionProvider({ children }: PropsWithChildren) {
         setSession(null);
         return storeSession(null);
       },
+      refreshAccessToken: refreshAccessToken
+        ? async () => {
+            const nextSession = await refreshAccessToken();
+            if (!nextSession) return null;
+
+            await storeSession(nextSession);
+            setSession(nextSession);
+            return nextSession;
+          }
+        : undefined,
     });
 
-    return () => configureApiAuth({ onUnauthorized: undefined });
-  }, []);
+    return () =>
+      configureApiAuth({ onUnauthorized: undefined, refreshAccessToken: undefined });
+  }, [refreshAccessToken]);
 
   const signIn = useCallback(async (nextSession: string) => {
     if (!nextSession) throw new Error('A non-empty session is required');
