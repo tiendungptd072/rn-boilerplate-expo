@@ -17,6 +17,7 @@ export type ComponentColorTokens = {
   button: {
     primary: ButtonColorTokens;
     secondary: ButtonColorTokens;
+    tertiary: ButtonColorTokens;
     outline: ButtonColorTokens;
     ghost: ButtonColorTokens;
     destructive: ButtonColorTokens;
@@ -80,6 +81,9 @@ export type ComponentColorTokens = {
     default: string;
     strong: string;
   };
+  skeleton: {
+    background: string;
+  };
   overlay: {
     scrim: string;
   };
@@ -91,12 +95,22 @@ export type ComponentColorTokens = {
   };
 };
 
-export function createComponentColorTokens(colors: SemanticColors): ComponentColorTokens {
+export function createComponentColorTokens(
+  colors: SemanticColors,
+): ComponentColorTokens {
   const unavailable = {
     disabled: colors.action.disabled,
     disabledBorder: colors.border.subtle,
     disabledForeground: colors.content.disabled,
     focusRing: colors.border.focus,
+  };
+  const tertiary = {
+    ...unavailable,
+    background: colors.background.transparent,
+    border: colors.background.transparent,
+    foreground: colors.content.brand,
+    pressed: colors.background.selected,
+    pressedBorder: colors.background.transparent,
   };
 
   return {
@@ -117,6 +131,7 @@ export function createComponentColorTokens(colors: SemanticColors): ComponentCol
         pressed: colors.action.secondaryPressed,
         pressedBorder: colors.border.strong,
       },
+      tertiary,
       outline: {
         ...unavailable,
         background: colors.background.transparent,
@@ -125,21 +140,14 @@ export function createComponentColorTokens(colors: SemanticColors): ComponentCol
         pressed: colors.action.secondaryPressed,
         pressedBorder: colors.border.strong,
       },
-      ghost: {
-        ...unavailable,
-        background: colors.background.transparent,
-        border: colors.background.transparent,
-        foreground: colors.content.brand,
-        pressed: colors.action.secondaryPressed,
-        pressedBorder: colors.background.transparent,
-      },
+      ghost: tertiary,
       destructive: {
         ...unavailable,
-        background: colors.feedback.danger,
-        border: colors.feedback.danger,
+        background: colors.action.destructive,
+        border: colors.action.destructive,
         foreground: colors.content.onAction,
-        pressed: colors.feedback.danger,
-        pressedBorder: colors.feedback.danger,
+        pressed: colors.action.destructivePressed,
+        pressedBorder: colors.action.destructivePressed,
       },
     },
     input: {
@@ -200,6 +208,9 @@ export function createComponentColorTokens(colors: SemanticColors): ComponentCol
       subtle: colors.border.subtle,
       default: colors.border.default,
       strong: colors.border.strong,
+    },
+    skeleton: {
+      background: colors.background.subtle,
     },
     overlay: {
       scrim: colors.overlay.scrim,

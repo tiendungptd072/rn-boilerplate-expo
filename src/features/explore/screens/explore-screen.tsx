@@ -8,6 +8,7 @@ import { LanguageSettings } from '@/components/language-settings';
 import { Collapsible } from '@/components/ui/collapsible';
 import { WebBadge } from '@/components/web-badge';
 import { AppText, Icon, layout, radius, spacing, Surface } from '@/design-system';
+import { ComponentShowcase } from '@/features/explore/components/component-showcase';
 import { FormShowcase } from '@/features/explore/components/form-showcase';
 
 export default function ExploreScreen() {
@@ -115,6 +116,10 @@ export default function ExploreScreen() {
               The <AppText variant="code">motion</AppText> tokens provide shared durations, easing,
               springs, and the system reduced-motion policy for Reanimated.
             </AppText>
+          </Collapsible>
+
+          <Collapsible title="Component showcase">
+            <ComponentShowcase />
           </Collapsible>
         </View>
         {Platform.OS === 'web' && <WebBadge />}

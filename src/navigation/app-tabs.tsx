@@ -6,7 +6,7 @@ import {
   StyleSheet,
 } from 'react-native';
 
-import { useTheme } from '@/design-system/theme/theme-provider';
+import { useTheme } from '@/design-system';
 
 export default function AppTabs() {
   const theme = useTheme();

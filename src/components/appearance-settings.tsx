@@ -2,10 +2,9 @@ import { StyleSheet } from 'react-native';
 
 import {
   AppText,
+  Card,
   RadioGroup,
-  radius,
   spacing,
-  Surface,
   type ThemePreference,
   useThemeSettings,
 } from '@/design-system';
@@ -21,7 +20,7 @@ export function AppearanceSettings() {
   ];
 
   return (
-    <Surface tone="surface" style={styles.container}>
+    <Card style={styles.container}>
       <AppText variant="title">{t('settings.appearance.title')}</AppText>
       <RadioGroup
         accessibilityLabel={t('settings.appearance.title')}
@@ -29,14 +28,12 @@ export function AppearanceSettings() {
         options={appearanceOptions}
         value={preference}
       />
-    </Surface>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: radius.lg,
     gap: spacing.sm,
-    padding: spacing.md,
   },
 });

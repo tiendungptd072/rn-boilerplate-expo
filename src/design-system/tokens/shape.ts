@@ -10,6 +10,8 @@ export const radius = {
   full: 999,
 } as const;
 
+export type RadiusToken = keyof typeof radius;
+
 export const borderWidth = {
   none: 0,
   hairline: StyleSheet.hairlineWidth,

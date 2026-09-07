@@ -1,0 +1,18 @@
+export const viPermissions = {
+  'permissions.camera.title': 'Quyền truy cập camera',
+  'permissions.camera.reason': 'Cho phép dùng camera để chụp ảnh và quét mã.',
+  'permissions.location.title': 'Quyền truy cập vị trí',
+  'permissions.location.reason': 'Cho phép dùng vị trí cho các tính năng liên quan.',
+  'permissions.microphone.title': 'Quyền truy cập micro',
+  'permissions.microphone.reason': 'Cho phép dùng micro khi tính năng cần thu âm.',
+  'permissions.checking': 'Đang kiểm tra quyền...',
+  'permissions.requestable': 'Cần cấp quyền để tiếp tục.',
+  'permissions.requesting': 'Đang yêu cầu quyền...',
+  'permissions.blocked': 'Quyền đã bị chặn. Hãy bật lại trong cài đặt ứng dụng.',
+  'permissions.unsupported': 'Thiết bị hoặc trình duyệt không hỗ trợ khả năng này.',
+  'permissions.error': 'Không thể kiểm tra trạng thái quyền.',
+  'permissions.granted': 'Đã cấp quyền.',
+  'permissions.actionError': 'Thao tác quyền thất bại. Vui lòng thử lại.',
+  'permissions.allow': 'Cho phép truy cập',
+  'permissions.openSettings': 'Mở cài đặt',
+} as const;

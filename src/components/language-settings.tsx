@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { AppText, RadioGroup, radius, spacing, Surface } from '@/design-system';
+import { AppText, Card, RadioGroup, spacing } from '@/design-system';
 import { type LanguagePreference, useLocalization } from '@/i18n';
 
 /** Allows the user to follow the device language or choose a supported language. */
@@ -13,7 +13,7 @@ export function LanguageSettings() {
   ];
 
   return (
-    <Surface tone="surface" style={styles.container}>
+    <Card style={styles.container}>
       <AppText variant="title">{t('settings.language.title')}</AppText>
       <RadioGroup
         accessibilityLabel={t('settings.language.title')}
@@ -21,14 +21,12 @@ export function LanguageSettings() {
         options={options}
         value={preference}
       />
-    </Surface>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: radius.lg,
     gap: spacing.sm,
-    padding: spacing.md,
   },
 });

@@ -5,7 +5,13 @@ import { AppPressable, type AppPressableProps } from './app-pressable';
 import { AppText } from './app-text';
 import { useTheme } from '../theme/theme-provider';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'tertiary'
+  | 'outline'
+  | 'ghost'
+  | 'destructive';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export type ButtonProps = Omit<AppPressableProps, 'busy' | 'children' | 'disabled'> & {

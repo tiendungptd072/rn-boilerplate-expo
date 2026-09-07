@@ -1,11 +1,11 @@
 import { version } from 'expo/package.json';
 import { Image } from 'expo-image';
-import { useColorScheme, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
-import { AppText, spacing, Surface } from '@/design-system';
+import { AppText, spacing, Surface, useTheme } from '@/design-system';
 
 export function WebBadge() {
-  const scheme = useColorScheme();
+  const theme = useTheme();
 
   return (
     <Surface style={styles.container}>
@@ -13,8 +13,9 @@ export function WebBadge() {
         v{version}
       </AppText>
       <Image
+        accessibilityLabel="Expo"
         source={
-          scheme === 'dark'
+          theme.isDark
             ? require('@/assets/images/expo-badge-white.png')
             : require('@/assets/images/expo-badge.png')
         }

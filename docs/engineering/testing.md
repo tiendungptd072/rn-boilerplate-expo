@@ -1,14 +1,52 @@
 # Testing and verification
 
-Verification depth follows the route tier. Always choose the smallest runnable check that would fail for the changed behavior.
+Verification must match the changed behavior and risk. Prefer the smallest check that would fail for the regression.
 
-| Tier | Required depth |
-| --- | --- |
-| FAST | Focused/basic check and `git diff --check` |
-| BALANCED | Lint, typecheck, relevant tests, diff check |
-| DEEP | BALANCED plus broader affected-suite/integration coverage |
-| CRITICAL | Maximum appropriate checks plus explicit security/release review |
+## Available commands
 
-Use `bun run lint`, `bun run typecheck`, and the closest project-native test. Tooling uses `bun run test:ai`. Dependency changes also run `bunx expo install --check` and `bun install --frozen-lockfile`.
+```bash
+bun run lint
+bun run typecheck
+bun test
+```
 
-Tests must be deterministic, credential-free, and assert observable contracts. Prefer a focused regression test over broad snapshots. Git tooling tests use temporary repositories and must never access production remotes. Document manual device/build verification only when automation is impractical, including platform, build type, steps, and limits.
+Run a focused Bun test by passing its path, for example:
+
+```bash
+bun test tests/api-client.test.js
+```
+
+## Verification tiers
+
+- FAST: focused syntax, format, or manual check plus `git diff --check`.
+- BALANCED: lint, typecheck, nearest relevant tests, and `git diff --check`.
+- DEEP: BALANCED plus broader tests across affected boundaries and platforms.
+- CRITICAL: DEEP plus explicit auth, security, migration, release, or data-loss review.
+
+Dependency changes additionally require:
+
+```bash
+bunx expo install --check
+bun install --frozen-lockfile
+```
+
+Routing or web-rendering changes should also verify a production web export when relevant:
+
+```bash
+bunx expo export --platform web
+```
+
+## Test ownership
+
+- Put deterministic infrastructure and utility tests under `tests/` while the suite remains small.
+- Keep feature behavior tests near the feature when colocating improves ownership.
+- Test public behavior and trust boundaries instead of implementation details.
+- Mock network and platform dependencies at their boundary; do not hide invalid production behavior with broad mocks.
+
+## Mobile checks
+
+Automation does not replace device-specific verification. Check impacted iOS, Android, and web behavior, including loading, error, empty, offline, keyboard, safe-area, accessibility, reduced-motion, and dark-mode states when relevant.
+
+## Handoff
+
+Report exact commands run, their result, untested platforms or states, and why any expected check was skipped. Do not claim a check passed when it was unavailable.

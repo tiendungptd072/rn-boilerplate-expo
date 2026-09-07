@@ -1,19 +1,36 @@
 # Agent skills
 
-Skills under `.agents/skills` are concise procedures loaded only when routed. `AGENTS.md` and owner docs remain the source of project behavior; skills reference them instead of copying standards.
+Skills package reusable task workflows. They should contain non-obvious procedure, references, or deterministic scripts—not duplicate repository policy.
 
-| Route | Skill |
+## Current status
+
+The repository does not currently contain `.agents/skills`. Codex may expose user-level or system skills, but project correctness must not depend on a personal installation. Caveman is optional and documented separately.
+
+## Selection rules
+
+- Load a skill only when the task or user explicitly names it.
+- Prefer one primary skill. Add another only when the task crosses a real boundary.
+- Keep global invariants in `AGENTS.md`, detailed standards in owner docs, and repeatable workflows in skills.
+- Never load all skills for discovery; their metadata should be enough to select one.
+- A skill may raise verification or safety requirements but must not weaken repository rules.
+
+## Minimal future set
+
+When repository-local skills are implemented, start with:
+
+| Skill | Scope |
 | --- | --- |
-| New screen, route, component, feature | `rn-feature` |
-| Known or unknown defect | `bug-fix` |
-| Endpoint/query/mutation | `api-integration` |
-| Requested review or small maintenance | `code-review` |
-| Broad internal restructure | `refactor` |
-| Expo/package upgrade | `dependency-upgrade` |
-| Measured performance issue | `performance` |
-| Shared UI or Design System component | `ui-component` |
-| Verified task completion | `git-finish` |
+| `rn-feature` | Screen, route, and product capability implementation |
+| `bug-fix` | Root-cause diagnosis and regression protection |
+| `ui-component` | Shared component and design-system behavior |
+| `api-integration` | Typed remote endpoint and trust-boundary work |
+| `code-review` | Scoped correctness and regression review |
+| `git-finish` | Explicit-path verification, commit, and push safety |
 
-`ai:route` returns only task-relevant skills and names `git-finish` separately as the completion skill. Codex discovers repository skills through `.agents/skills`; Claude Code reads the same canonical `AGENTS.md` through `CLAUDE.md` and can follow the routed skill path directly.
+Add dependency, performance, or refactor skills only after repeated tasks justify them.
 
-Each skill must have clear entry/completion conditions, remain procedural and short, and avoid embedding model names or duplicated engineering policy.
+## Skill contract
+
+Each skill should have a concise `SKILL.md` with clear trigger metadata, required workflow, verification, and references. Put detailed variants in directly linked reference files. Avoid README files, duplicated examples, generated boilerplate, or scripts that are never executed.
+
+Validate skills independently and benchmark representative tasks before making them default. Missing optional skills should degrade to owner docs and normal engineering judgment, not block the task.
